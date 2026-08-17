@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ComprarRouteImport } from './routes/comprar'
+import { Route as GraciasRouteImport } from './routes/gracias'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedCursoRouteImport } from './routes/_authenticated/curso'
@@ -41,6 +42,11 @@ const AuthRoute = AuthRouteImport.update({
 const ComprarRoute = ComprarRouteImport.update({
   id: '/comprar',
   path: '/comprar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GraciasRoute = GraciasRouteImport.update({
+  id: '/gracias',
+  path: '/gracias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/comprar': typeof ComprarRoute
+  '/gracias': typeof GraciasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/curso': typeof AuthenticatedCursoRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/comprar': typeof ComprarRoute
+  '/gracias': typeof GraciasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/curso': typeof AuthenticatedCursoRoute
   '/admin/contenido': typeof AuthenticatedAdminContenidoRoute
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/comprar': typeof ComprarRoute
+  '/gracias': typeof GraciasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/curso': typeof AuthenticatedCursoRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/comprar'
+    | '/gracias'
     | '/reset-password'
     | '/admin'
     | '/curso'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/comprar'
+    | '/gracias'
     | '/reset-password'
     | '/curso'
     | '/admin/contenido'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/comprar'
+    | '/gracias'
     | '/reset-password'
     | '/_authenticated/admin'
     | '/_authenticated/curso'
@@ -197,6 +209,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ComprarRoute: typeof ComprarRoute
+  GraciasRoute: typeof GraciasRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -229,6 +242,13 @@ declare module '@tanstack/react-router' {
       path: '/comprar'
       fullPath: '/comprar'
       preLoaderRoute: typeof ComprarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gracias': {
+      id: '/gracias'
+      path: '/gracias'
+      fullPath: '/gracias'
+      preLoaderRoute: typeof GraciasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -346,6 +366,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ComprarRoute: ComprarRoute,
+  GraciasRoute: GraciasRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
