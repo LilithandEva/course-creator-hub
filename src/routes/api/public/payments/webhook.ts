@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 import { sendTransactionalEmail } from "@/lib/notifications.server";
 
-let _supabase: ReturnType<typeof createClient> | null = null;
+let _supabase: ReturnType<typeof createClient<Database>> | null = null;
 function getSupabase() {
   if (!_supabase) {
-    _supabase = createClient(
+    _supabase = createClient<Database>(
       process.env['SUPABASE_URL']!,
       process.env['SUPABASE_SERVICE_ROLE_KEY']!,
     );
@@ -32,7 +33,7 @@ async function fulfillCheckout(session: any, env: StripeEnv) {
     {
       user_id: userId ?? null,
       email: email ?? null,
-      course_id: course['id'],
+      course_id: course.id,
       provider: "stripe",
       provider_session_id: session.id,
       amount_cents: session.amount_total ?? 0,
@@ -52,13 +53,13 @@ async function fulfillCheckout(session: any, env: StripeEnv) {
     .from("enrollments")
     .select("id")
     .eq("user_id", userId)
-    .eq("course_id", course['id'])
+    .eq("course_id", course.id)
     .maybeSingle();
 
   if (!existing) {
     await supabase.from("enrollments").insert({
       user_id: userId,
-      course_id: course['id'],
+      course_id: course.id,
       source: "stripe",
       stripe_session_id: session.id,
     });
@@ -66,16 +67,16 @@ async function fulfillCheckout(session: any, env: StripeEnv) {
     if (email) {
       await sendTransactionalEmail({
         to: email,
-        subject: `Ya tienes acceso a ${course['title']}`,
+        subject: `Ya tienes acceso a ${course.title}`,
         heading: "¡Bienvenido al curso!",
-        body: `Tu pago se ha confirmado y ya tienes acceso completo a <strong>${course['title']}</strong>. Entra en el campus y empieza por el primer módulo.`,
+        body: `Tu pago se ha confirmado y ya tienes acceso completo a <strong>${course.title}</strong>. Entra en el campus y empieza por el primer módulo.`,
       });
     }
     await sendTransactionalEmail({
       toAdmin: true,
       subject: "Nueva inscripción en el curso",
       heading: "Nueva compra",
-      body: `${email ?? "Un alumno"} acaba de comprar ${course['title']} (${env}).`,
+      body: `${email ?? "Un alumno"} acaba de comprar ${course.title} (${env}).`,
     });
   }
 }
