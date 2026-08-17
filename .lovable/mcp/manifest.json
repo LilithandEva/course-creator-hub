@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://jaikmkzyjkechhzfilfh.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "course-creator-hub",
+      "version": "0.1.0",
+      "title": "Course Creator Hub"
+    },
+    "tools": [
+      {
+        "name": "get_curriculum",
+        "title": "Get course curriculum",
+        "description": "List the modules and lessons of the course for the signed-in enrolled student, including which lessons are already completed.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_lesson",
+        "title": "Get lesson content",
+        "description": "Read the written content of one lesson (title, text and downloadable resource names) for the signed-in enrolled student.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "lesson_id": {
+              "type": "string",
+              "description": "Lesson id from get_curriculum."
+            }
+          },
+          "required": [
+            "lesson_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_course_theory",
+        "title": "Search course theory",
+        "description": "Full-text search the course theory material (indexed PDF) and return the most relevant fragments. Only enrolled students can read it.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Search terms, in the course language (Spanish)."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Max fragments to return (default 8)."
+            }
+          },
+          "required": [
+            "query",
+            "limit"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_progress",
+        "title": "Get my progress",
+        "description": "Return the signed-in student's course progress: percentage completed, completed lessons and quiz attempt history.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "mark_lesson_complete",
+        "title": "Mark lesson complete",
+        "description": "Mark a lesson as completed (or pending) for the signed-in enrolled student, updating their progress bar.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "lesson_id": {
+              "type": "string",
+              "description": "Lesson id from get_curriculum."
+            },
+            "completed": {
+              "type": "boolean",
+              "description": "true to mark completed, false to mark pending."
+            }
+          },
+          "required": [
+            "lesson_id",
+            "completed"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
