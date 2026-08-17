@@ -136,11 +136,14 @@ export type Database = {
           description: string
           id: string
           is_published: boolean
+          monthly_price_cents: number
           price_cents: number
           slug: string
+          subscription_enabled: boolean
           subtitle: string
           title: string
           updated_at: string
+          yearly_price_cents: number
         }
         Insert: {
           created_at?: string
@@ -148,11 +151,14 @@ export type Database = {
           description?: string
           id?: string
           is_published?: boolean
+          monthly_price_cents?: number
           price_cents?: number
           slug: string
+          subscription_enabled?: boolean
           subtitle?: string
           title: string
           updated_at?: string
+          yearly_price_cents?: number
         }
         Update: {
           created_at?: string
@@ -160,16 +166,20 @@ export type Database = {
           description?: string
           id?: string
           is_published?: boolean
+          monthly_price_cents?: number
           price_cents?: number
           slug?: string
+          subscription_enabled?: boolean
           subtitle?: string
           title?: string
           updated_at?: string
+          yearly_price_cents?: number
         }
         Relationships: []
       }
       enrollments: {
         Row: {
+          completion_email_sent_at: string | null
           course_id: string
           created_at: string
           id: string
@@ -178,6 +188,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          completion_email_sent_at?: string | null
           course_id: string
           created_at?: string
           id?: string
@@ -186,6 +197,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          completion_email_sent_at?: string | null
           course_id?: string
           created_at?: string
           id?: string
@@ -412,6 +424,8 @@ export type Database = {
           id: string
           provider: string
           provider_session_id: string | null
+          receipt_url: string | null
+          refunded_at: string | null
           status: string
           updated_at: string
           user_id: string | null
@@ -425,6 +439,8 @@ export type Database = {
           id?: string
           provider?: string
           provider_session_id?: string | null
+          receipt_url?: string | null
+          refunded_at?: string | null
           status?: string
           updated_at?: string
           user_id?: string | null
@@ -438,6 +454,8 @@ export type Database = {
           id?: string
           provider?: string
           provider_session_id?: string | null
+          receipt_url?: string | null
+          refunded_at?: string | null
           status?: string
           updated_at?: string
           user_id?: string | null
@@ -445,6 +463,41 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "payments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pending_access: {
+        Row: {
+          claimed_at: string | null
+          course_id: string
+          created_at: string
+          email: string
+          id: string
+          stripe_session_id: string | null
+        }
+        Insert: {
+          claimed_at?: string | null
+          course_id: string
+          created_at?: string
+          email: string
+          id?: string
+          stripe_session_id?: string | null
+        }
+        Update: {
+          claimed_at?: string | null
+          course_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pending_access_course_id_fkey"
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
@@ -610,6 +663,65 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          course_id: string | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          price_id: string
+          product_id: string | null
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          course_id?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id: string
+          product_id?: string | null
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          course_id?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id?: string
+          product_id?: string | null
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       testimonials: {
         Row: {
           created_at: string
@@ -664,6 +776,33 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_events: {
+        Row: {
+          created_at: string
+          environment: string
+          id: string
+          payload: Json | null
+          processed_at: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          environment?: string
+          id: string
+          payload?: Json | null
+          processed_at?: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string
+          type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -672,6 +811,10 @@ export type Database = {
       can_access_lesson: { Args: { _lesson_id: string }; Returns: boolean }
       can_access_module: { Args: { _module_id: string }; Returns: boolean }
       get_quiz_for_student: { Args: { _quiz_id: string }; Returns: Json }
+      has_active_subscription: {
+        Args: { _course_id: string; _user_id: string }
+        Returns: boolean
+      }
       has_course_access: { Args: { _course_id: string }; Returns: boolean }
       has_role: {
         Args: {
