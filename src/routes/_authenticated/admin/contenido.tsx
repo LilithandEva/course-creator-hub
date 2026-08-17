@@ -130,6 +130,8 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
   const [title, setTitle] = useState(m.title);
   const [description, setDescription] = useState(m.description ?? "");
   const [newLesson, setNewLesson] = useState("");
+  const [newVideo, setNewVideo] = useState("");
+  const [newContent, setNewContent] = useState("");
   const quiz = m.quizzes?.[0] ?? null;
 
   async function run(fn: () => PromiseLike<{ error: unknown }>, msg: string) {
