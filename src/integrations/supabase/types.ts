@@ -14,6 +14,121 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          content: string
+          course_id: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          course_id: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          course_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_chunks: {
+        Row: {
+          content: string
+          course_id: string
+          created_at: string
+          document_id: string
+          id: string
+          position: number
+          tsv: unknown
+        }
+        Insert: {
+          content: string
+          course_id: string
+          created_at?: string
+          document_id: string
+          id?: string
+          position?: number
+          tsv?: unknown
+        }
+        Update: {
+          content?: string
+          course_id?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          position?: number
+          tsv?: unknown
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_chunks_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_chunks_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "course_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_documents: {
+        Row: {
+          chunk_count: number
+          course_id: string
+          created_at: string
+          id: string
+          name: string
+          storage_path: string
+        }
+        Insert: {
+          chunk_count?: number
+          course_id: string
+          created_at?: string
+          id?: string
+          name: string
+          storage_path: string
+        }
+        Update: {
+          chunk_count?: number
+          course_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_documents_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           created_at: string
@@ -287,6 +402,56 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount_cents: number
+          course_id: string
+          created_at: string
+          currency: string
+          email: string | null
+          id: string
+          provider: string
+          provider_session_id: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount_cents?: number
+          course_id: string
+          created_at?: string
+          currency?: string
+          email?: string | null
+          id?: string
+          provider?: string
+          provider_session_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          course_id?: string
+          created_at?: string
+          currency?: string
+          email?: string | null
+          id?: string
+          provider?: string
+          provider_session_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -516,6 +681,13 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      search_course_chunks: {
+        Args: { _course_id: string; _limit?: number; _query: string }
+        Returns: {
+          content: string
+          rank: number
+        }[]
+      }
       submit_quiz: { Args: { _answers: Json; _quiz_id: string }; Returns: Json }
     }
     Enums: {
