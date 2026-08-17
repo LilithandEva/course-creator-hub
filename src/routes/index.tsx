@@ -94,7 +94,7 @@ function LandingPage() {
                   size="lg"
                   style={{ backgroundColor: "var(--brand-accent)", color: "#0B1D33" }}
                 >
-                  <Link to={user ? "/curso" : "/auth"}>
+                  <Link to={user ? "/comprar" : "/auth"}>
                     {settings?.hero_cta ?? "Apuntarme al curso"}
                   </Link>
                 </Button>
@@ -210,7 +210,7 @@ function LandingPage() {
               className="mt-8"
               style={{ backgroundColor: "var(--brand-accent)", color: "#0B1D33" }}
             >
-              <Link to={user ? "/curso" : "/auth"}>
+              <Link to={user ? "/comprar" : "/auth"}>
                 {settings?.hero_cta ?? "Apuntarme al curso"}
               </Link>
             </Button>
