@@ -311,26 +311,31 @@ function LessonEditor({
     onChange();
   }
 
-  async function uploadResource(file: File) {
+  async function uploadResources(files: File[]) {
+    if (!files.length) return;
     setUploading(true);
-    const path = `lessons/${lesson.id}/${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("course-files").upload(path, file);
-    if (error) {
-      setUploading(false);
-      toast.error(error.message);
-      return;
+    let ok = 0;
+    for (const file of files) {
+      const path = `lessons/${lesson.id}/${Date.now()}-${file.name}`;
+      const { error } = await supabase.storage.from("course-files").upload(path, file);
+      if (error) {
+        toast.error(`${file.name}: ${error.message}`);
+        continue;
+      }
+      const { error: insertError } = await supabase
+        .from("lesson_resources")
+        .insert({ lesson_id: lesson.id, name: file.name, storage_path: path });
+      if (insertError) {
+        toast.error(`${file.name}: ${insertError.message}`);
+        continue;
+      }
+      ok++;
     }
-    const { error: insertError } = await supabase
-      .from("lesson_resources")
-      .insert({ lesson_id: lesson.id, name: file.name, storage_path: path });
     setUploading(false);
-    if (insertError) {
-      toast.error(insertError.message);
-      return;
-    }
-    toast.success("Archivo subido");
+    if (ok) toast.success(ok === 1 ? "Archivo subido" : `${ok} archivos subidos`);
     onChange();
   }
+
 
   return (
     <div className="p-6">
