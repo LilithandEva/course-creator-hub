@@ -29,32 +29,36 @@ export const Route = createFileRoute("/gracias")({
 });
 
 function ThanksPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { data } = useQuery({ queryKey: ["landing"], queryFn: fetchLanding });
   const courseId = data?.course?.id;
 
   // Access is granted server-side by the payment webhook; this page only polls
   // the database until that confirmation lands.
-  const { data: enrollment } = useQuery({
-    queryKey: ["enrollment", user?.id, courseId],
+  const { data: access } = useQuery({
+    queryKey: ["access", user?.id, courseId],
     enabled: !!user?.id && !!courseId,
-    refetchInterval: (query) => (query.state.data ? false : 2000),
-    queryFn: async () => {
-      const { data: row } = await supabase
-        .from("enrollments")
-        .select("id")
-        .eq("user_id", user!.id)
-        .eq("course_id", courseId!)
-        .maybeSingle();
-      return row;
-    },
+    refetchInterval: (query) => (query.state.data?.hasAccess ? false : 2000),
+    queryFn: () => fetchMyAccess(courseId!),
   });
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader variant="light" />
       <main className="mx-auto flex w-full max-w-2xl flex-col items-center px-6 py-20 text-center">
-        {enrollment ? (
+        {!loading && !user ? (
+          <>
+            <CheckCircle2 className="h-12 w-12 text-accent" />
+            <h1 className="mt-6 font-display text-3xl font-semibold">¡Pago recibido!</h1>
+            <p className="mt-3 text-muted-foreground">
+              Crea tu cuenta usando el mismo email con el que has pagado y el acceso al curso se
+              activará automáticamente. También te lo hemos enviado por email.
+            </p>
+            <Button asChild className="mt-8">
+              <Link to="/auth">Crear mi cuenta</Link>
+            </Button>
+          </>
+        ) : access?.hasAccess ? (
           <>
             <CheckCircle2 className="h-12 w-12 text-accent" />
             <h1 className="mt-6 font-display text-3xl font-semibold">¡Pago confirmado!</h1>
