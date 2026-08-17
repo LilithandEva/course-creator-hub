@@ -33,6 +33,16 @@ export const notifyProgress = createServerFn({ method: "POST" })
         }`,
       });
     } else {
+      // One completion email per enrolment, ever.
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: updated } = await supabaseAdmin
+        .from("enrollments")
+        .update({ completion_email_sent_at: new Date().toISOString() })
+        .eq("user_id", context.userId)
+        .is("completion_email_sent_at", null)
+        .select("id");
+      if (!updated?.length) return { sent: false };
+
       await sendTransactionalEmail({
         to: email,
         subject: `¡Has completado ${data.courseTitle}!`,
