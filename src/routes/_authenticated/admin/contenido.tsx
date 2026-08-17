@@ -212,7 +212,7 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
       </div>
 
       <form
-        className="flex flex-wrap items-end gap-3 border-t border-border p-6"
+        className="space-y-3 border-t border-border p-6"
         onSubmit={(e) => {
           e.preventDefault();
           if (!newLesson.trim()) return;
@@ -222,25 +222,55 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
                 module_id: m.id,
                 title: newLesson.trim(),
                 position: m.lessons.length + 1,
-                content: "",
+                content: newContent,
+                video_url: newVideo.trim() || null,
               }),
             "Lección creada",
-          ).then(() => setNewLesson(""));
+          ).then(() => {
+            setNewLesson("");
+            setNewVideo("");
+            setNewContent("");
+          });
         }}
       >
-        <div className="min-w-64 flex-1">
-          <Label>Nueva lección</Label>
-          <Input
-            value={newLesson}
-            onChange={(e) => setNewLesson(e.target.value)}
-            placeholder="Título de la lección"
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <Label>Nueva lección</Label>
+            <Input
+              value={newLesson}
+              onChange={(e) => setNewLesson(e.target.value)}
+              placeholder="Título de la lección"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Vídeo (URL de Bunny Stream)</Label>
+            <Input
+              value={newVideo}
+              onChange={(e) => setNewVideo(e.target.value)}
+              placeholder="https://iframe.mediadelivery.net/embed/…"
+              className="mt-1"
+            />
+          </div>
+        </div>
+        <div>
+          <Label>Texto de la lección</Label>
+          <Textarea
+            value={newContent}
+            onChange={(e) => setNewContent(e.target.value)}
+            rows={3}
+            placeholder="Contenido explicativo (puedes ampliarlo después)"
             className="mt-1"
           />
         </div>
+        <p className="text-xs text-muted-foreground">
+          Los archivos descargables se añaden al editar la lección una vez creada.
+        </p>
         <Button type="submit" variant="outline">
           <Plus className="mr-1 size-4" /> Añadir lección
         </Button>
       </form>
+
 
       {m.has_quiz && quiz && <QuizEditor quiz={quiz} onChange={onChange} />}
     </section>
