@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ClaseGratisRouteImport } from './routes/clase-gratis'
 import { Route as ComprarRouteImport } from './routes/comprar'
+import { Route as CreadorRouteImport } from './routes/creador'
 import { Route as GraciasRouteImport } from './routes/gracias'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -56,6 +57,11 @@ const ClaseGratisRoute = ClaseGratisRouteImport.update({
 const ComprarRoute = ComprarRouteImport.update({
   id: '/comprar',
   path: '/comprar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreadorRoute = CreadorRouteImport.update({
+  id: '/creador',
+  path: '/creador',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GraciasRoute = GraciasRouteImport.update({
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/clase-gratis': typeof ClaseGratisRoute
   '/comprar': typeof ComprarRoute
+  '/creador': typeof CreadorRoute
   '/gracias': typeof GraciasRoute
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/clase-gratis': typeof ClaseGratisRoute
   '/comprar': typeof ComprarRoute
+  '/creador': typeof CreadorRoute
   '/gracias': typeof GraciasRoute
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -218,6 +226,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/clase-gratis': typeof ClaseGratisRoute
   '/comprar': typeof ComprarRoute
+  '/creador': typeof CreadorRoute
   '/gracias': typeof GraciasRoute
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/clase-gratis'
     | '/comprar'
+    | '/creador'
     | '/gracias'
     | '/mcp'
     | '/reset-password'
@@ -270,6 +280,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/clase-gratis'
     | '/comprar'
+    | '/creador'
     | '/gracias'
     | '/mcp'
     | '/reset-password'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/clase-gratis'
     | '/comprar'
+    | '/creador'
     | '/gracias'
     | '/mcp'
     | '/reset-password'
@@ -322,6 +334,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ClaseGratisRoute: typeof ClaseGratisRoute
   ComprarRoute: typeof ComprarRoute
+  CreadorRoute: typeof CreadorRoute
   GraciasRoute: typeof GraciasRoute
   McpRoute: typeof McpRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -367,6 +380,13 @@ declare module '@tanstack/react-router' {
       path: '/comprar'
       fullPath: '/comprar'
       preLoaderRoute: typeof ComprarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/creador': {
+      id: '/creador'
+      path: '/creador'
+      fullPath: '/creador'
+      preLoaderRoute: typeof CreadorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gracias': {
@@ -554,6 +574,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ClaseGratisRoute: ClaseGratisRoute,
   ComprarRoute: ComprarRoute,
+  CreadorRoute: CreadorRoute,
   GraciasRoute: GraciasRoute,
   McpRoute: McpRoute,
   ResetPasswordRoute: ResetPasswordRoute,
