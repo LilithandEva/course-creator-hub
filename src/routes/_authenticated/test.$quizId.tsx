@@ -69,6 +69,14 @@ function QuizPage() {
       setResult(data);
       queryClient.invalidateQueries({ queryKey: ["attempts"] });
       toast.success(`Nota: ${data.score}%`);
+      void notify({
+        data: {
+          kind: "quiz",
+          quizTitle: quiz?.title ?? "Test del módulo",
+          score: data.score,
+          passed: data.passed,
+        },
+      }).catch(() => undefined);
     },
     onError: (e: Error) => toast.error(e.message),
   });
