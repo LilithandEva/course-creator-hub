@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   fetchCourse,
   fetchCurriculum,
-  fetchMyEnrollment,
+  fetchMyAccess,
   fetchMyProgress,
 } from "@/lib/course";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,11 +24,12 @@ export const Route = createFileRoute("/_authenticated/curso")({
 function CoursePage() {
   const { data: course } = useQuery({ queryKey: ["course"], queryFn: fetchCourse });
 
-  const { data: enrollment, isLoading: loadingEnrollment } = useQuery({
-    queryKey: ["enrollment", course?.id],
-    queryFn: () => fetchMyEnrollment(course!.id),
+  const { data: access, isLoading: loadingEnrollment } = useQuery({
+    queryKey: ["access", course?.id],
+    queryFn: () => fetchMyAccess(course!.id),
     enabled: !!course?.id,
   });
+  const enrollment = access?.hasAccess ?? false;
 
   const { data: modules } = useQuery({
     queryKey: ["curriculum", course?.id],
