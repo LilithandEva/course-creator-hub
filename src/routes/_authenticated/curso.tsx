@@ -59,9 +59,8 @@ function CoursePage() {
   const notify = useServerFn(notifyProgress);
   useEffect(() => {
     if (pct !== 100 || !course?.id) return;
-    const key = `course-completed-email:${course.id}`;
-    if (localStorage.getItem(key)) return;
-    localStorage.setItem(key, "1");
+    // Deduped server-side against the enrolment record, so it can't be re-sent
+    // from another browser or lost when local storage is cleared.
     void notify({ data: { kind: "course", courseTitle: course.title } }).catch(() => undefined);
   }, [pct, course?.id, course?.title, notify]);
 
