@@ -21,6 +21,7 @@ import { Route as AuthenticatedAdminPaginaRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminTutorRouteImport } from './routes/_authenticated/admin/tutor'
 import { Route as AuthenticatedLeccionLessonIdRouteImport } from './routes/_authenticated/leccion.$lessonId'
 import { Route as AuthenticatedTestQuizIdRouteImport } from './routes/_authenticated/test.$quizId'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -84,6 +85,12 @@ const AuthenticatedTestQuizIdRoute = AuthenticatedTestQuizIdRouteImport.update({
   path: '/test/$quizId',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,6 +117,7 @@ export interface FileRoutesByTo {
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,6 +133,7 @@ export interface FileRoutesById {
   '/_authenticated/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/_authenticated/test/$quizId': typeof AuthenticatedTestQuizIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/leccion/$lessonId'
     | '/test/$quizId'
     | '/admin/'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/leccion/$lessonId'
     | '/test/$quizId'
     | '/admin'
+    | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
@@ -165,6 +177,7 @@ export interface FileRouteTypes {
     | '/_authenticated/leccion/$lessonId'
     | '/_authenticated/test/$quizId'
     | '/_authenticated/admin/'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -172,6 +185,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -260,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTestQuizIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -305,6 +326,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
