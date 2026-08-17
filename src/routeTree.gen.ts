@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedCursoRouteImport } from './routes/_authenticated/curso'
 import { Route as AuthenticatedLeccionLessonIdRouteImport } from './routes/_authenticated/leccion.$lessonId'
+import { Route as AuthenticatedTestQuizIdRouteImport } from './routes/_authenticated/test.$quizId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const AuthenticatedLeccionLessonIdRoute =
     path: '/leccion/$lessonId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTestQuizIdRoute = AuthenticatedTestQuizIdRouteImport.update({
+  id: '/test/$quizId',
+  path: '/test/$quizId',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/curso': typeof AuthenticatedCursoRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
+  '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/curso': typeof AuthenticatedCursoRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
+  '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,12 +77,25 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/curso': typeof AuthenticatedCursoRoute
   '/_authenticated/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
+  '/_authenticated/test/$quizId': typeof AuthenticatedTestQuizIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/reset-password' | '/curso' | '/leccion/$lessonId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/curso'
+    | '/leccion/$lessonId'
+    | '/test/$quizId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/reset-password' | '/curso' | '/leccion/$lessonId'
+  to:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/curso'
+    | '/leccion/$lessonId'
+    | '/test/$quizId'
   id:
     | '__root__'
     | '/'
@@ -83,6 +104,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/curso'
     | '/_authenticated/leccion/$lessonId'
+    | '/_authenticated/test/$quizId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -136,17 +158,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLeccionLessonIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/test/$quizId': {
+      id: '/_authenticated/test/$quizId'
+      path: '/test/$quizId'
+      fullPath: '/test/$quizId'
+      preLoaderRoute: typeof AuthenticatedTestQuizIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCursoRoute: typeof AuthenticatedCursoRoute
   AuthenticatedLeccionLessonIdRoute: typeof AuthenticatedLeccionLessonIdRoute
+  AuthenticatedTestQuizIdRoute: typeof AuthenticatedTestQuizIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCursoRoute: AuthenticatedCursoRoute,
   AuthenticatedLeccionLessonIdRoute: AuthenticatedLeccionLessonIdRoute,
+  AuthenticatedTestQuizIdRoute: AuthenticatedTestQuizIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
