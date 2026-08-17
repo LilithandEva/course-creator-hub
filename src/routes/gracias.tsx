@@ -4,8 +4,7 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchLanding } from "@/lib/course";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchLanding, fetchMyAccess } from "@/lib/course";
 
 export const Route = createFileRoute("/gracias")({
   validateSearch: (search: Record<string, unknown>): { session_id?: string } =>
