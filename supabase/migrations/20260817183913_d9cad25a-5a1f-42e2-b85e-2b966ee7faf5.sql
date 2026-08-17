@@ -1,0 +1,1 @@
+UPDATE public.landing_settings SET primary_color = '#B3121B', accent_color = '#E11D2E';

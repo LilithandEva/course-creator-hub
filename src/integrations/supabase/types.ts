@@ -838,6 +838,7 @@ export type Database = {
       can_access_lesson: { Args: { _lesson_id: string }; Returns: boolean }
       can_access_module: { Args: { _module_id: string }; Returns: boolean }
       can_read_course_file: { Args: { _path: string }; Returns: boolean }
+      can_read_syllabus: { Args: never; Returns: boolean }
       get_quiz_for_student: { Args: { _quiz_id: string }; Returns: Json }
       has_active_subscription: {
         Args: { _course_id: string; _user_id: string }
@@ -852,6 +853,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      is_restricted_asset: { Args: { _name: string }; Returns: boolean }
       search_course_chunks: {
         Args: { _course_id: string; _limit?: number; _query: string }
         Returns: {

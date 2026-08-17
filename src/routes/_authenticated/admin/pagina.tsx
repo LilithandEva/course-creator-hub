@@ -52,8 +52,8 @@ function AdminLanding() {
     hero_cta: "",
     about_title: "",
     about_body: "",
-    primary_color: "#0B1D33",
-    accent_color: "#F5B544",
+    primary_color: "#B3121B",
+    accent_color: "#E11D2E",
     font_family: "geometric",
   });
   const [gallery, setGallery] = useState<string[]>([]);
