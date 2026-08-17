@@ -132,9 +132,9 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
   const [newLesson, setNewLesson] = useState("");
   const quiz = m.quizzes?.[0] ?? null;
 
-  async function run(fn: () => Promise<{ error: unknown } | void>, msg: string) {
+  async function run(fn: () => PromiseLike<{ error: unknown }>, msg: string) {
     const res = await fn();
-    const error = res && "error" in res ? res.error : null;
+    const error = res?.error ?? null;
     if (error) {
       toast.error((error as { message: string }).message);
       return;
@@ -187,7 +187,10 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
                 .from("modules")
                 .update({ has_quiz: checked })
                 .eq("id", m.id);
-              if (error) return toast.error(error.message);
+              if (error) {
+                toast.error(error.message);
+                return;
+              }
               if (checked && !quiz) {
                 await supabase
                   .from("quizzes")
@@ -268,7 +271,10 @@ function LessonEditor({
         duration_minutes: duration ? Number(duration) : null,
       })
       .eq("id", lesson.id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Lección guardada");
     onChange();
   }
@@ -279,13 +285,17 @@ function LessonEditor({
     const { error } = await supabase.storage.from("course-files").upload(path, file);
     if (error) {
       setUploading(false);
-      return toast.error(error.message);
+      toast.error(error.message);
+      return;
     }
     const { error: insertError } = await supabase
       .from("lesson_resources")
       .insert({ lesson_id: lesson.id, name: file.name, storage_path: path });
     setUploading(false);
-    if (insertError) return toast.error(insertError.message);
+    if (insertError) {
+      toast.error(insertError.message);
+      return;
+    }
     toast.success("Archivo subido");
     onChange();
   }
@@ -411,7 +421,10 @@ function QuizEditor({
       })
       .select("id")
       .single();
-    if (error || !question) return toast.error(error?.message ?? "Error");
+    if (error || !question) {
+      toast.error(error?.message ?? "Error");
+      return;
+    }
     const rows = options
       .map((label, i) => ({ label: label.trim(), i }))
       .filter((o) => o.label)
@@ -422,7 +435,10 @@ function QuizEditor({
         position: idx + 1,
       }));
     const { error: optError } = await supabase.from("quiz_options").insert(rows);
-    if (optError) return toast.error(optError.message);
+    if (optError) {
+      toast.error(optError.message);
+      return;
+    }
     setPrompt("");
     setOptions(["", "", "", ""]);
     setCorrect(0);
