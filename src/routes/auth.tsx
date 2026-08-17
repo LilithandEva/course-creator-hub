@@ -23,16 +23,30 @@ export const Route = createFileRoute("/auth")({
       },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>) => {
+    const next = typeof s['next'] === "string" ? s['next'] : "";
+    // Only same-origin relative paths are allowed as a return target.
+    return { next: next.startsWith("/") && !next.startsWith("//") ? next : "" };
+  },
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [confirmSent, setConfirmSent] = useState(false);
+
+  function goAfterAuth() {
+    if (next) {
+      window.location.href = next;
+      return;
+    }
+    navigate({ to: "/curso" });
+  }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -44,7 +58,7 @@ function AuthPage() {
       return;
     }
     toast.success("Sesión iniciada");
-    navigate({ to: "/curso" });
+    goAfterAuth();
   }
 
   async function handleSignup(e: React.FormEvent) {
@@ -54,7 +68,7 @@ function AuthPage() {
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: next ? `${window.location.origin}${next}` : window.location.origin,
         data: { full_name: fullName },
       },
     });
@@ -68,7 +82,7 @@ function AuthPage() {
       toast.success("Revisa tu email para confirmar la cuenta");
       return;
     }
-    navigate({ to: "/curso" });
+    goAfterAuth();
   }
 
   async function handleReset() {
