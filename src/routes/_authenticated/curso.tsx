@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { BookOpen, CheckCircle2, ClipboardList, Clock, Lock, PlayCircle } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { CourseChatbot } from "@/components/course-chatbot";
+import { useServerFn } from "@tanstack/react-start";
+import { useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +15,7 @@ import {
   fetchMyProgress,
 } from "@/lib/course";
 import { supabase } from "@/integrations/supabase/client";
+import { notifyProgress } from "@/lib/notifications.functions";
 
 export const Route = createFileRoute("/_authenticated/curso")({
   component: CoursePage,
@@ -51,6 +54,15 @@ function CoursePage() {
   const pct = allLessons.length
     ? Math.round((allLessons.filter((l) => completed.has(l.id)).length / allLessons.length) * 100)
     : 0;
+
+  const notify = useServerFn(notifyProgress);
+  useEffect(() => {
+    if (pct !== 100 || !course?.id) return;
+    const key = `course-completed-email:${course.id}`;
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, "1");
+    void notify({ data: { kind: "course", courseTitle: course.title } }).catch(() => undefined);
+  }, [pct, course?.id, course?.title, notify]);
 
   if (!loadingEnrollment && !enrollment) {
     return (
