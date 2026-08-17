@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, Plus, Trash2 } from "lucide-react";
+import { ImagePlus, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { signedAssetUrl } from "@/lib/landing";
+import { fontStack, signedAssetUrl } from "@/lib/landing";
 
 export const Route = createFileRoute("/_authenticated/admin/pagina")({
   component: AdminLanding,
@@ -26,6 +26,9 @@ const FONTS = [
   { value: "serif", label: "Fraunces + DM Sans (editorial)" },
   { value: "grotesk", label: "DM Sans (neutra)" },
 ];
+
+type Benefit = { title: string; body: string };
+type Faq = { q: string; a: string };
 
 function AdminLanding() {
   const queryClient = useQueryClient();
@@ -43,17 +46,6 @@ function AdminLanding() {
     },
   });
 
-  const { data: testimonials } = useQuery({
-    queryKey: ["admin-testimonials"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("testimonials")
-        .select("*")
-        .order("position", { ascending: true });
-      return data ?? [];
-    },
-  });
-
   const [form, setForm] = useState({
     hero_title: "",
     hero_subtitle: "",
@@ -65,6 +57,8 @@ function AdminLanding() {
     font_family: "geometric",
   });
   const [gallery, setGallery] = useState<string[]>([]);
+  const [benefits, setBenefits] = useState<Benefit[]>([]);
+  const [faq, setFaq] = useState<Faq[]>([]);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
@@ -80,13 +74,15 @@ function AdminLanding() {
       font_family: settings.font_family,
     });
     setGallery(Array.isArray(settings.gallery) ? (settings.gallery as string[]) : []);
+    setBenefits(Array.isArray(settings.benefits) ? (settings.benefits as Benefit[]) : []);
+    setFaq(Array.isArray(settings.faq) ? (settings.faq as Faq[]) : []);
   }, [settings]);
 
   const save = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
         .from("landing_settings")
-        .update({ ...form, gallery })
+        .update({ ...form, gallery, benefits, faq })
         .eq("id", settings!.id);
       if (error) throw error;
     },
@@ -110,56 +106,60 @@ function AdminLanding() {
     onDone(path);
   }
 
+  const fonts = fontStack(form.font_family);
+
   return (
     <div className="space-y-8">
-      <div>
-        <p className="eyebrow text-muted-foreground">Panel de administración</p>
-        <h1 className="mt-1 font-display text-3xl font-bold">Página de venta</h1>
-      </div>
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="eyebrow text-muted-foreground">Página de venta</p>
+          <h1 className="display-lg mt-2">Diseño y textos</h1>
+        </div>
+        <Button
+          size="lg"
+          className="rounded-full px-7"
+          onClick={() => save.mutate()}
+          disabled={save.isPending || !settings}
+        >
+          <Save className="size-4" /> Guardar cambios
+        </Button>
+      </header>
 
-      <section className="surface space-y-4 p-6">
-        <h2 className="font-display text-lg font-bold">Textos</h2>
-        <div>
-          <Label>Título principal</Label>
-          <Input
-            value={form.hero_title}
-            onChange={(e) => setForm({ ...form, hero_title: e.target.value })}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <Label>Subtítulo</Label>
-          <Textarea
-            value={form.hero_subtitle}
-            onChange={(e) => setForm({ ...form, hero_subtitle: e.target.value })}
-            rows={2}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <Label>Texto del botón</Label>
-          <Input
-            value={form.hero_cta}
-            onChange={(e) => setForm({ ...form, hero_cta: e.target.value })}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <Label>Título de la sección "sobre el curso"</Label>
-          <Input
-            value={form.about_title}
-            onChange={(e) => setForm({ ...form, about_title: e.target.value })}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <Label>Descripción</Label>
-          <Textarea
-            value={form.about_body}
-            onChange={(e) => setForm({ ...form, about_body: e.target.value })}
-            rows={5}
-            className="mt-1"
-          />
+      {/* Vista previa en vivo */}
+      <section className="surface overflow-hidden">
+        <p className="border-b border-border px-6 py-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Vista previa
+        </p>
+        <div
+          className="ink-gradient px-8 py-12 text-white"
+          style={
+            {
+              "--brand": form.primary_color,
+              "--brand-accent": form.accent_color,
+            } as React.CSSProperties
+          }
+        >
+          <span
+            className="chip"
+            style={{ backgroundColor: form.accent_color, color: form.primary_color }}
+          >
+            Clase gratuita
+          </span>
+          <h2
+            className="mt-4 text-3xl font-bold leading-tight"
+            style={{ fontFamily: fonts.display }}
+          >
+            {form.hero_title || "Título principal"}
+          </h2>
+          <p className="mt-3 max-w-xl text-white/70" style={{ fontFamily: fonts.body }}>
+            {form.hero_subtitle || "Subtítulo de la página de venta"}
+          </p>
+          <span
+            className="mt-6 inline-flex rounded-full px-6 py-2.5 text-sm font-semibold"
+            style={{ backgroundColor: form.accent_color, color: form.primary_color }}
+          >
+            {form.hero_cta || "Apuntarme al curso"}
+          </span>
         </div>
       </section>
 
@@ -220,6 +220,125 @@ function AdminLanding() {
       </section>
 
       <section className="surface space-y-4 p-6">
+        <h2 className="font-display text-lg font-bold">Textos</h2>
+        <div>
+          <Label>Título principal</Label>
+          <Input
+            value={form.hero_title}
+            onChange={(e) => setForm({ ...form, hero_title: e.target.value })}
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label>Subtítulo</Label>
+          <Textarea
+            value={form.hero_subtitle}
+            onChange={(e) => setForm({ ...form, hero_subtitle: e.target.value })}
+            rows={2}
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label>Texto del botón de compra</Label>
+          <Input
+            value={form.hero_cta}
+            onChange={(e) => setForm({ ...form, hero_cta: e.target.value })}
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label>Título de "Qué aprenderás"</Label>
+          <Input
+            value={form.about_title}
+            onChange={(e) => setForm({ ...form, about_title: e.target.value })}
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label>Descripción</Label>
+          <Textarea
+            value={form.about_body}
+            onChange={(e) => setForm({ ...form, about_body: e.target.value })}
+            rows={5}
+            className="mt-1"
+          />
+        </div>
+      </section>
+
+      <section className="surface space-y-4 p-6">
+        <h2 className="font-display text-lg font-bold">Beneficios</h2>
+        {benefits.map((b, i) => (
+          <div key={i} className="grid gap-2 rounded-lg border border-border p-4 sm:grid-cols-[1fr_2fr_auto]">
+            <Input
+              value={b.title}
+              placeholder="Título"
+              onChange={(e) =>
+                setBenefits(benefits.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)))
+              }
+            />
+            <Input
+              value={b.body}
+              placeholder="Descripción"
+              onChange={(e) =>
+                setBenefits(benefits.map((x, j) => (j === i ? { ...x, body: e.target.value } : x)))
+              }
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setBenefits(benefits.filter((_, j) => j !== i))}
+              aria-label="Eliminar beneficio"
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+        ))}
+        <Button
+          variant="outline"
+          className="rounded-full"
+          onClick={() => setBenefits([...benefits, { title: "", body: "" }])}
+        >
+          <Plus className="size-4" /> Añadir beneficio
+        </Button>
+      </section>
+
+      <section className="surface space-y-4 p-6">
+        <h2 className="font-display text-lg font-bold">Preguntas frecuentes</h2>
+        {faq.map((f, i) => (
+          <div key={i} className="space-y-2 rounded-lg border border-border p-4">
+            <div className="flex gap-2">
+              <Input
+                value={f.q}
+                placeholder="Pregunta"
+                onChange={(e) => setFaq(faq.map((x, j) => (j === i ? { ...x, q: e.target.value } : x)))}
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setFaq(faq.filter((_, j) => j !== i))}
+                aria-label="Eliminar pregunta"
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </div>
+            <Textarea
+              rows={2}
+              value={f.a}
+              placeholder="Respuesta"
+              onChange={(e) => setFaq(faq.map((x, j) => (j === i ? { ...x, a: e.target.value } : x)))}
+            />
+          </div>
+        ))}
+        <Button
+          variant="outline"
+          className="rounded-full"
+          onClick={() => setFaq([...faq, { q: "", a: "" }])}
+        >
+          <Plus className="size-4" /> Añadir pregunta
+        </Button>
+      </section>
+
+      <section className="surface space-y-4 p-6">
         <h2 className="font-display text-lg font-bold">Galería / carrusel</h2>
         <div className="flex flex-wrap gap-3">
           {gallery.map((path) => (
@@ -229,7 +348,7 @@ function AdminLanding() {
               onRemove={() => setGallery((g) => g.filter((p) => p !== path))}
             />
           ))}
-          <label className="flex h-24 w-32 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border text-xs text-muted-foreground">
+          <label className="flex h-24 w-32 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border text-xs text-muted-foreground transition-colors hover:bg-secondary">
             <ImagePlus className="size-5" />
             {uploading ? "Subiendo…" : "Añadir foto"}
             <input
@@ -245,15 +364,14 @@ function AdminLanding() {
         </div>
       </section>
 
-      <Button size="lg" onClick={() => save.mutate()} disabled={save.isPending || !settings}>
-        Guardar cambios
+      <Button
+        size="lg"
+        className="rounded-full px-7"
+        onClick={() => save.mutate()}
+        disabled={save.isPending || !settings}
+      >
+        <Save className="size-4" /> Guardar cambios
       </Button>
-
-      <TestimonialsEditor
-        testimonials={testimonials ?? []}
-        onUpload={uploadImage}
-        onChange={() => queryClient.invalidateQueries({ queryKey: ["admin-testimonials"] })}
-      />
     </div>
   );
 }
@@ -264,7 +382,7 @@ function GalleryItem({ path, onRemove }: { path: string; onRemove: () => void })
     queryFn: () => signedAssetUrl(path),
   });
   return (
-    <div className="relative h-24 w-32 overflow-hidden rounded-md border border-border">
+    <div className="relative h-24 w-32 overflow-hidden rounded-lg border border-border">
       {url && <img src={url} alt="" className="h-full w-full object-cover" />}
       <button
         type="button"
@@ -275,128 +393,5 @@ function GalleryItem({ path, onRemove }: { path: string; onRemove: () => void })
         <Trash2 className="size-3.5" />
       </button>
     </div>
-  );
-}
-
-type Testimonial = {
-  id: string;
-  name: string;
-  role: string;
-  quote: string;
-  photo_url: string | null;
-  position: number;
-  is_visible: boolean;
-};
-
-function TestimonialsEditor({
-  testimonials,
-  onUpload,
-  onChange,
-}: {
-  testimonials: Testimonial[];
-  onUpload: (file: File, onDone: (path: string) => void) => void;
-  onChange: () => void;
-}) {
-  const [draft, setDraft] = useState({ name: "", role: "", quote: "", photo_url: "" });
-
-  async function add() {
-    if (!draft.name.trim() || !draft.quote.trim()) {
-      toast.error("Añade al menos nombre y testimonio");
-      return;
-    }
-    const { error } = await supabase.from("testimonials").insert({
-      name: draft.name.trim(),
-      role: draft.role.trim(),
-      quote: draft.quote.trim(),
-      photo_url: draft.photo_url || null,
-      position: testimonials.length + 1,
-    });
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    setDraft({ name: "", role: "", quote: "", photo_url: "" });
-    toast.success("Testimonio añadido");
-    onChange();
-  }
-
-  return (
-    <section className="surface space-y-4 p-6">
-      <h2 className="font-display text-lg font-bold">Testimonios</h2>
-
-      <ul className="space-y-2">
-        {testimonials.map((t) => (
-          <li
-            key={t.id}
-            className="flex items-start justify-between gap-3 rounded-md border border-border p-4"
-          >
-            <div>
-              <p className="font-medium">
-                {t.name} <span className="text-muted-foreground">· {t.role}</span>
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">{t.quote}</p>
-            </div>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={async () => {
-                await supabase.from("testimonials").delete().eq("id", t.id);
-                onChange();
-              }}
-            >
-              <Trash2 className="size-4" />
-            </Button>
-          </li>
-        ))}
-      </ul>
-
-      <div className="space-y-3 rounded-md border border-dashed border-border p-4">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div>
-            <Label>Nombre</Label>
-            <Input
-              value={draft.name}
-              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label>Rol / descripción</Label>
-            <Input
-              value={draft.role}
-              onChange={(e) => setDraft({ ...draft, role: e.target.value })}
-              className="mt-1"
-            />
-          </div>
-        </div>
-        <div>
-          <Label>Testimonio</Label>
-          <Textarea
-            value={draft.quote}
-            onChange={(e) => setDraft({ ...draft, quote: e.target.value })}
-            rows={3}
-            className="mt-1"
-          />
-        </div>
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-input px-3 py-2 text-sm">
-          <ImagePlus className="size-4" />
-          {draft.photo_url ? "Foto seleccionada" : "Subir foto"}
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) onUpload(file, (path) => setDraft((d) => ({ ...d, photo_url: path })));
-            }}
-          />
-        </label>
-        <div>
-          <Button onClick={add} variant="outline">
-            <Plus className="mr-1 size-4" /> Añadir testimonio
-          </Button>
-        </div>
-      </div>
-    </section>
   );
 }
