@@ -19,6 +19,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as AuthenticatedCuentaRouteImport } from './routes/_authenticated/cuenta'
 import { Route as AuthenticatedCursoRouteImport } from './routes/_authenticated/curso'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -79,6 +80,11 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCuentaRoute = AuthenticatedCuentaRouteImport.update({
+  id: '/cuenta',
+  path: '/cuenta',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCursoRoute = AuthenticatedCursoRouteImport.update({
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/cuenta': typeof AuthenticatedCuentaRoute
   '/curso': typeof AuthenticatedCursoRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/cuenta': typeof AuthenticatedCuentaRoute
   '/curso': typeof AuthenticatedCursoRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -190,6 +198,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_authenticated/cuenta': typeof AuthenticatedCuentaRoute
   '/_authenticated/curso': typeof AuthenticatedCursoRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/cuenta'
     | '/curso'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/cuenta'
     | '/curso'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/_authenticated/cuenta'
     | '/_authenticated/curso'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -354,6 +366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/cuenta': {
+      id: '/_authenticated/cuenta'
+      path: '/cuenta'
+      fullPath: '/cuenta'
+      preLoaderRoute: typeof AuthenticatedCuentaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/curso': {
       id: '/_authenticated/curso'
       path: '/curso'
@@ -449,6 +468,7 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedCuentaRoute: typeof AuthenticatedCuentaRoute
   AuthenticatedCursoRoute: typeof AuthenticatedCursoRoute
   AuthenticatedLeccionLessonIdRoute: typeof AuthenticatedLeccionLessonIdRoute
   AuthenticatedTestQuizIdRoute: typeof AuthenticatedTestQuizIdRoute
@@ -456,6 +476,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedCuentaRoute: AuthenticatedCuentaRoute,
   AuthenticatedCursoRoute: AuthenticatedCursoRoute,
   AuthenticatedLeccionLessonIdRoute: AuthenticatedLeccionLessonIdRoute,
   AuthenticatedTestQuizIdRoute: AuthenticatedTestQuizIdRoute,
