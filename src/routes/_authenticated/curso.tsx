@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, CheckCircle2, ClipboardList, Clock, Lock, PlayCircle } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
+import { CourseChatbot } from "@/components/course-chatbot";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -189,6 +190,7 @@ function CoursePage() {
           </section>
         )}
       </main>
+      <CourseChatbot courseId={course?.id} />
     </div>
   );
 }

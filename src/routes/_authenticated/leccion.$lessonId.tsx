@@ -3,10 +3,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, CheckCircle2, Download, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site-header";
+import { CourseChatbot } from "@/components/course-chatbot";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { bunnyEmbedUrl, toggleLessonComplete } from "@/lib/course";
 import { useAuth } from "@/hooks/useAuth";
+import { fetchCourse } from "@/lib/course";
 
 export const Route = createFileRoute("/_authenticated/leccion/$lessonId")({
   component: LessonPage,
@@ -29,6 +31,9 @@ function LessonPage() {
       return data;
     },
   });
+
+  const { data: course } = useQuery({ queryKey: ["course"], queryFn: fetchCourse });
+  const courseId = course?.id;
 
   const { data: progress } = useQuery({
     queryKey: ["progress"],
@@ -158,6 +163,7 @@ function LessonPage() {
           </Button>
         </div>
       </main>
+      <CourseChatbot courseId={courseId} />
     </div>
   );
 }
