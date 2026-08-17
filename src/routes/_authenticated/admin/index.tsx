@@ -169,9 +169,24 @@ function AdminStudents() {
                   </TableCell>
                   <TableCell>
                     {r.enrollment ? (
-                      <Badge variant={r.enrollment.source === "manual" ? "secondary" : "default"}>
-                        {r.enrollment.source === "manual" ? "Manual" : "Pago"}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={r.enrollment.source === "manual" ? "secondary" : "default"}>
+                          {r.enrollment.source === "manual" ? "Manual" : "Pago"}
+                        </Badge>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 px-2 text-xs text-destructive hover:text-destructive"
+                          disabled={revoke.isPending}
+                          onClick={() => {
+                            if (confirm(`¿Retirar el acceso a ${r.profile.email}?`)) {
+                              revoke.mutate(r.enrollment!.id);
+                            }
+                          }}
+                        >
+                          Retirar
+                        </Button>
+                      </div>
                     ) : (
                       <span className="text-xs text-muted-foreground">Sin acceso</span>
                     )}
