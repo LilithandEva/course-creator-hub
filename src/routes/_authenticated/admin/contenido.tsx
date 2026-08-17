@@ -380,38 +380,58 @@ function LessonEditor({
           </div>
 
           <div>
-            <Label>Descargables</Label>
-            <ul className="mt-2 space-y-1 text-sm">
-              {lesson.lesson_resources?.map((r) => (
-                <li key={r.id} className="flex items-center justify-between">
-                  <span>{r.name}</span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={async () => {
-                      await supabase.storage.from("course-files").remove([r.storage_path]);
-                      await supabase.from("lesson_resources").delete().eq("id", r.id);
-                      onChange();
-                    }}
+            <Label>Archivos descargables (PDF, plantillas…)</Label>
+            {lesson.lesson_resources?.length ? (
+              <ul className="mt-2 space-y-1 text-sm">
+                {lesson.lesson_resources.map((r) => (
+                  <li
+                    key={r.id}
+                    className="flex items-center justify-between rounded-md border border-border px-3 py-2"
                   >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </li>
-              ))}
-            </ul>
-            <label className="mt-2 inline-flex cursor-pointer items-center gap-2 rounded-md border border-input px-3 py-2 text-sm">
+                    <span className="truncate">{r.name}</span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={async () => {
+                        if (!confirm(`¿Eliminar "${r.name}"?`)) return;
+                        await supabase.storage.from("course-files").remove([r.storage_path]);
+                        const { error } = await supabase
+                          .from("lesson_resources")
+                          .delete()
+                          .eq("id", r.id);
+                        if (error) {
+                          toast.error(error.message);
+                          return;
+                        }
+                        toast.success("Archivo eliminado");
+                        onChange();
+                      }}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-sm text-muted-foreground">Aún no hay archivos.</p>
+            )}
+            <label className="mt-2 inline-flex cursor-pointer items-center gap-2 rounded-md border border-input px-3 py-2 text-sm transition-colors hover:bg-secondary">
               <FileUp className="size-4" />
-              {uploading ? "Subiendo…" : "Subir archivo"}
+              {uploading ? "Subiendo…" : "Subir archivos"}
               <input
                 type="file"
+                multiple
                 className="hidden"
+                disabled={uploading}
                 onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) uploadResource(file);
+                  const files = Array.from(e.target.files ?? []);
+                  e.target.value = "";
+                  uploadResources(files);
                 }}
               />
             </label>
           </div>
+
 
           <div className="flex gap-2">
             <Button onClick={save}>Guardar lección</Button>
