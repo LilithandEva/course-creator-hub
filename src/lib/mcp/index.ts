@@ -23,5 +23,5 @@ export default defineMcp({
     searchTheoryTool,
     getProgressTool,
     markLessonCompleteTool,
-  ],
+  ] as Parameters<typeof defineMcp>[0]["tools"],
 });
