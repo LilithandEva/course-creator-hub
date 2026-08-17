@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site-header";
@@ -9,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { notifyProgress } from "@/lib/notifications.functions";
 
 export const Route = createFileRoute("/_authenticated/test/$quizId")({
   component: QuizPage,
@@ -55,6 +57,8 @@ function QuizPage() {
       return data ?? [];
     },
   });
+
+  const notify = useServerFn(notifyProgress);
 
   const submit = useMutation({
     mutationFn: async () => {
