@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ClaseGratisRouteImport } from './routes/clase-gratis'
 import { Route as ComprarRouteImport } from './routes/comprar'
 import { Route as GraciasRouteImport } from './routes/gracias'
 import { Route as McpRouteImport } from './routes/mcp'
@@ -45,6 +46,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClaseGratisRoute = ClaseGratisRouteImport.update({
+  id: '/clase-gratis',
+  path: '/clase-gratis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComprarRoute = ComprarRouteImport.update({
@@ -159,6 +165,7 @@ const ApiPublicPaymentsWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/clase-gratis': typeof ClaseGratisRoute
   '/comprar': typeof ComprarRoute
   '/gracias': typeof GraciasRoute
   '/mcp': typeof McpRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/clase-gratis': typeof ClaseGratisRoute
   '/comprar': typeof ComprarRoute
   '/gracias': typeof GraciasRoute
   '/mcp': typeof McpRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/clase-gratis': typeof ClaseGratisRoute
   '/comprar': typeof ComprarRoute
   '/gracias': typeof GraciasRoute
   '/mcp': typeof McpRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/clase-gratis'
     | '/comprar'
     | '/gracias'
     | '/mcp'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/clase-gratis'
     | '/comprar'
     | '/gracias'
     | '/mcp'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/clase-gratis'
     | '/comprar'
     | '/gracias'
     | '/mcp'
@@ -308,6 +320,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ClaseGratisRoute: typeof ClaseGratisRoute
   ComprarRoute: typeof ComprarRoute
   GraciasRoute: typeof GraciasRoute
   McpRoute: typeof McpRoute
@@ -340,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clase-gratis': {
+      id: '/clase-gratis'
+      path: '/clase-gratis'
+      fullPath: '/clase-gratis'
+      preLoaderRoute: typeof ClaseGratisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/comprar': {
@@ -532,6 +552,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ClaseGratisRoute: ClaseGratisRoute,
   ComprarRoute: ComprarRoute,
   GraciasRoute: GraciasRoute,
   McpRoute: McpRoute,
