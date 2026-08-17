@@ -813,6 +813,7 @@ export type Database = {
     Functions: {
       can_access_lesson: { Args: { _lesson_id: string }; Returns: boolean }
       can_access_module: { Args: { _module_id: string }; Returns: boolean }
+      can_read_course_file: { Args: { _path: string }; Returns: boolean }
       get_quiz_for_student: { Args: { _quiz_id: string }; Returns: Json }
       has_active_subscription: {
         Args: { _course_id: string; _user_id: string }
