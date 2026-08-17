@@ -58,9 +58,7 @@ export function SiteHeader({ variant = "light" }: { variant?: "light" | "ink" })
                 <Link to="/auth">Iniciar sesión</Link>
               </Button>
               <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                <Link to="/auth" search={{ mode: "signup" }}>
-                  Crear cuenta
-                </Link>
+                <Link to="/auth">Crear cuenta</Link>
               </Button>
             </>
           )}
