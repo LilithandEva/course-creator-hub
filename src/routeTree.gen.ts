@@ -26,6 +26,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminContenidoRouteImport } from './routes/_authenticated/admin/contenido'
 import { Route as AuthenticatedAdminPaginaRouteImport } from './routes/_authenticated/admin/pagina'
+import { Route as AuthenticatedAdminPagosRouteImport } from './routes/_authenticated/admin/pagos'
 import { Route as AuthenticatedAdminPreciosRouteImport } from './routes/_authenticated/admin/precios'
 import { Route as AuthenticatedAdminTutorRouteImport } from './routes/_authenticated/admin/tutor'
 import { Route as AuthenticatedLeccionLessonIdRouteImport } from './routes/_authenticated/leccion.$lessonId'
@@ -121,6 +122,11 @@ const AuthenticatedAdminPaginaRoute =
     path: '/pagina',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPagosRoute = AuthenticatedAdminPagosRouteImport.update({
+  id: '/pagos',
+  path: '/pagos',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminPreciosRoute =
   AuthenticatedAdminPreciosRouteImport.update({
     id: '/precios',
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/contenido': typeof AuthenticatedAdminContenidoRoute
   '/admin/pagina': typeof AuthenticatedAdminPaginaRoute
+  '/admin/pagos': typeof AuthenticatedAdminPagosRoute
   '/admin/precios': typeof AuthenticatedAdminPreciosRoute
   '/admin/tutor': typeof AuthenticatedAdminTutorRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/contenido': typeof AuthenticatedAdminContenidoRoute
   '/admin/pagina': typeof AuthenticatedAdminPaginaRoute
+  '/admin/pagos': typeof AuthenticatedAdminPagosRoute
   '/admin/precios': typeof AuthenticatedAdminPreciosRoute
   '/admin/tutor': typeof AuthenticatedAdminTutorRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/contenido': typeof AuthenticatedAdminContenidoRoute
   '/_authenticated/admin/pagina': typeof AuthenticatedAdminPaginaRoute
+  '/_authenticated/admin/pagos': typeof AuthenticatedAdminPagosRoute
   '/_authenticated/admin/precios': typeof AuthenticatedAdminPreciosRoute
   '/_authenticated/admin/tutor': typeof AuthenticatedAdminTutorRoute
   '/_authenticated/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
@@ -238,6 +247,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/admin/contenido'
     | '/admin/pagina'
+    | '/admin/pagos'
     | '/admin/precios'
     | '/admin/tutor'
     | '/leccion/$lessonId'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/admin/contenido'
     | '/admin/pagina'
+    | '/admin/pagos'
     | '/admin/precios'
     | '/admin/tutor'
     | '/leccion/$lessonId'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/contenido'
     | '/_authenticated/admin/pagina'
+    | '/_authenticated/admin/pagos'
     | '/_authenticated/admin/precios'
     | '/_authenticated/admin/tutor'
     | '/_authenticated/leccion/$lessonId'
@@ -428,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPaginaRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/pagos': {
+      id: '/_authenticated/admin/pagos'
+      path: '/pagos'
+      fullPath: '/admin/pagos'
+      preLoaderRoute: typeof AuthenticatedAdminPagosRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/precios': {
       id: '/_authenticated/admin/precios'
       path: '/precios'
@@ -469,6 +488,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminContenidoRoute: typeof AuthenticatedAdminContenidoRoute
   AuthenticatedAdminPaginaRoute: typeof AuthenticatedAdminPaginaRoute
+  AuthenticatedAdminPagosRoute: typeof AuthenticatedAdminPagosRoute
   AuthenticatedAdminPreciosRoute: typeof AuthenticatedAdminPreciosRoute
   AuthenticatedAdminTutorRoute: typeof AuthenticatedAdminTutorRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -478,6 +498,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
   {
     AuthenticatedAdminContenidoRoute: AuthenticatedAdminContenidoRoute,
     AuthenticatedAdminPaginaRoute: AuthenticatedAdminPaginaRoute,
+    AuthenticatedAdminPagosRoute: AuthenticatedAdminPagosRoute,
     AuthenticatedAdminPreciosRoute: AuthenticatedAdminPreciosRoute,
     AuthenticatedAdminTutorRoute: AuthenticatedAdminTutorRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
