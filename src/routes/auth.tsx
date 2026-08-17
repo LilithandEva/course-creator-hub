@@ -23,10 +23,10 @@ export const Route = createFileRoute("/auth")({
       },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>) => {
+  validateSearch: (s: Record<string, unknown>): { next?: string } => {
     const next = typeof s['next'] === "string" ? s['next'] : "";
     // Only same-origin relative paths are allowed as a return target.
-    return { next: next.startsWith("/") && !next.startsWith("//") ? next : "" };
+    return next.startsWith("/") && !next.startsWith("//") ? { next } : {};
   },
   component: AuthPage,
 });
