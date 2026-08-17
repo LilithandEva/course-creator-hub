@@ -17,6 +17,7 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as AuthenticatedCursoRouteImport } from './routes/_authenticated/curso'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminContenidoRouteImport } from './routes/_authenticated/admin/contenido'
+import { Route as AuthenticatedAdminPaginaRouteImport } from './routes/_authenticated/admin/pagina'
 import { Route as AuthenticatedLeccionLessonIdRouteImport } from './routes/_authenticated/leccion.$lessonId'
 import { Route as AuthenticatedTestQuizIdRouteImport } from './routes/_authenticated/test.$quizId'
 
@@ -60,6 +61,12 @@ const AuthenticatedAdminContenidoRoute =
     path: '/contenido',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPaginaRoute =
+  AuthenticatedAdminPaginaRouteImport.update({
+    id: '/pagina',
+    path: '/pagina',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedLeccionLessonIdRoute =
   AuthenticatedLeccionLessonIdRouteImport.update({
     id: '/leccion/$lessonId',
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/curso': typeof AuthenticatedCursoRoute
   '/admin/contenido': typeof AuthenticatedAdminContenidoRoute
+  '/admin/pagina': typeof AuthenticatedAdminPaginaRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -89,6 +97,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/curso': typeof AuthenticatedCursoRoute
   '/admin/contenido': typeof AuthenticatedAdminContenidoRoute
+  '/admin/pagina': typeof AuthenticatedAdminPaginaRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -102,6 +111,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/curso': typeof AuthenticatedCursoRoute
   '/_authenticated/admin/contenido': typeof AuthenticatedAdminContenidoRoute
+  '/_authenticated/admin/pagina': typeof AuthenticatedAdminPaginaRoute
   '/_authenticated/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/_authenticated/test/$quizId': typeof AuthenticatedTestQuizIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/curso'
     | '/admin/contenido'
+    | '/admin/pagina'
     | '/leccion/$lessonId'
     | '/test/$quizId'
     | '/admin/'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/curso'
     | '/admin/contenido'
+    | '/admin/pagina'
     | '/leccion/$lessonId'
     | '/test/$quizId'
     | '/admin'
@@ -137,6 +149,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/curso'
     | '/_authenticated/admin/contenido'
+    | '/_authenticated/admin/pagina'
     | '/_authenticated/leccion/$lessonId'
     | '/_authenticated/test/$quizId'
     | '/_authenticated/admin/'
@@ -207,6 +220,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminContenidoRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/pagina': {
+      id: '/_authenticated/admin/pagina'
+      path: '/pagina'
+      fullPath: '/admin/pagina'
+      preLoaderRoute: typeof AuthenticatedAdminPaginaRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/leccion/$lessonId': {
       id: '/_authenticated/leccion/$lessonId'
       path: '/leccion/$lessonId'
@@ -226,12 +246,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminContenidoRoute: typeof AuthenticatedAdminContenidoRoute
+  AuthenticatedAdminPaginaRoute: typeof AuthenticatedAdminPaginaRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
     AuthenticatedAdminContenidoRoute: AuthenticatedAdminContenidoRoute,
+    AuthenticatedAdminPaginaRoute: AuthenticatedAdminPaginaRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
 
