@@ -6,12 +6,14 @@ import {
   CheckCircle2,
   Download,
   FileText,
+  Lock,
   PlayCircle,
   Quote,
   ShieldCheck,
   Sparkles,
   Star,
 } from "lucide-react";
+
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +29,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { fetchLanding, formatPrice } from "@/lib/course";
+import { bunnyEmbedUrl, fetchLanding, fetchMyAccess, formatPrice } from "@/lib/course";
 import { fontStack, signedAssetUrl, signedAssetUrls } from "@/lib/landing";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -74,17 +76,27 @@ function LandingPage() {
     enabled: galleryPaths.length > 0,
   });
 
-  const { data: syllabusUrl } = useQuery({
-    queryKey: ["syllabus", settings?.syllabus_pdf_path],
-    queryFn: () => signedAssetUrl(settings?.syllabus_pdf_path),
-    enabled: !!settings?.syllabus_pdf_path,
+  const { data: access } = useQuery({
+    queryKey: ["my-access", course?.id, user?.id],
+    queryFn: () => fetchMyAccess(course!.id),
+    enabled: !!course?.id && !!user,
   });
+  const hasAccess = !!access?.hasAccess;
+
+  const { data: syllabusUrl } = useQuery({
+    queryKey: ["syllabus", settings?.syllabus_pdf_path, user?.id],
+    queryFn: () => signedAssetUrl(settings?.syllabus_pdf_path),
+    enabled: !!settings?.syllabus_pdf_path && hasAccess,
+  });
+
+  const heroEmbed = bunnyEmbedUrl(settings?.free_lesson_video_url);
+
 
   const testimonials = (data?.testimonials ?? []).filter((t) => t.is_visible);
 
   const style = {
-    "--brand": settings?.primary_color ?? "#0B1D33",
-    "--brand-accent": settings?.accent_color ?? "#F5B544",
+    "--brand": settings?.primary_color ?? "#B3121B",
+    "--brand-accent": settings?.accent_color ?? "#E11D2E",
     "--font-display-custom": fonts.display,
     "--font-body-custom": fonts.body,
   } as React.CSSProperties;
@@ -99,112 +111,125 @@ function LandingPage() {
       <SiteHeader />
 
       <main>
-        {/* 1 · Gancho / propuesta de valor */}
-        <section className="ink-gradient relative overflow-hidden text-white">
-          <div className="container-x grid gap-14 py-24 md:grid-cols-[1.15fr_0.85fr] md:items-center">
-            <div className="reveal">
-              <span
-                className="chip glass"
-                style={{ color: "var(--brand-accent)", fontFamily: "var(--font-body-custom)" }}
+        {/* 1 · Eslogan + vídeo protagonista */}
+        <section className="blaze-gradient relative overflow-hidden">
+          <div className="container-x pb-16 pt-14 text-center">
+            <span
+              className="chip reveal"
+              style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+            >
+              <Sparkles className="size-3.5" />
+              Formación en eCommerce
+            </span>
+
+            <h1
+              className="display-xl reveal mx-auto mt-6 max-w-4xl"
+              style={{ fontFamily: "var(--font-display-custom)" }}
+            >
+              {settings?.hero_title ?? course?.title ?? "Monta tu tienda online y véndele al mundo"}
+            </h1>
+
+            <p className="lede reveal mx-auto mt-5 max-w-2xl font-medium text-muted-foreground">
+              {settings?.hero_subtitle ??
+                course?.subtitle ??
+                "Sin humo: el método completo para lanzar, gestionar y escalar tu eCommerce."}
+            </p>
+
+            {/* Vídeo protagonista */}
+            <div className="reveal mx-auto mt-10 max-w-4xl">
+              <div
+                className="overflow-hidden rounded-3xl border-4 bg-black shadow-[var(--shadow-lift)]"
+                style={{ borderColor: "var(--brand-accent)" }}
               >
-                <Sparkles className="size-3.5" />
-                Formación en eCommerce
-              </span>
+                {heroEmbed ? (
+                  <iframe
+                    src={heroEmbed}
+                    title={settings?.free_lesson_title ?? "Vídeo de presentación"}
+                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+                    allowFullScreen
+                    className="aspect-video w-full"
+                  />
+                ) : (
+                  <Link
+                    to="/clase-gratis"
+                    className="group flex aspect-video w-full flex-col items-center justify-center gap-4 text-white/80"
+                  >
+                    <span
+                      className="flex size-20 items-center justify-center rounded-full transition-transform group-hover:scale-110"
+                      style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                    >
+                      <PlayCircle className="size-10" />
+                    </span>
+                    <span className="text-sm font-semibold uppercase tracking-widest">
+                      Ver el vídeo de presentación
+                    </span>
+                  </Link>
+                )}
+              </div>
 
-              <h1
-                className="display-xl mt-6"
-                style={{ fontFamily: "var(--font-display-custom)" }}
-              >
-                {settings?.hero_title ?? course?.title ?? "eCommerce Formation"}
-              </h1>
-
-              <p className="lede mt-6 max-w-xl text-white/75">
-                {settings?.hero_subtitle ??
-                  course?.subtitle ??
-                  "Lanza, gestiona y escala tu tienda online con un método probado, paso a paso."}
-              </p>
-
-              <div className="mt-9 flex flex-wrap items-center gap-3">
+              {/* CTA de compra justo debajo del vídeo */}
+              <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <Button
                   asChild
                   size="lg"
-                  className="h-12 rounded-full px-7 text-base font-semibold shadow-lg transition-transform hover:-translate-y-0.5"
-                  style={{ backgroundColor: "var(--brand-accent)", color: "#12203a" }}
+                  className="glow-cta h-14 rounded-full px-9 text-base font-extrabold uppercase tracking-wide transition-transform hover:-translate-y-0.5"
+                  style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
                 >
-                  <Link to="/clase-gratis">
-                    <PlayCircle className="size-5" />
-                    Ver la clase gratuita
+                  <Link to={buyLink}>
+                    {settings?.hero_cta ?? "Quiero el curso"}
+                    <ArrowRight className="size-5" />
                   </Link>
                 </Button>
                 <Button
                   asChild
                   size="lg"
                   variant="outline"
-                  className="h-12 rounded-full border-white/25 bg-transparent px-7 text-base text-white hover:bg-white/10 hover:text-white"
+                  className="h-14 rounded-full border-2 px-7 text-base font-bold"
                 >
-                  <a href="#temario">
-                    <FileText className="size-5" />
-                    Descargar el temario
-                  </a>
+                  <Link to="/clase-gratis">
+                    <PlayCircle className="size-5" />
+                    Clase gratuita
+                  </Link>
                 </Button>
               </div>
-
-              <ul className="mt-10 grid gap-x-6 gap-y-2.5 text-sm text-white/70 sm:grid-cols-2">
-                {[
-                  "Acceso de por vida al campus",
-                  "Plantillas y recursos descargables",
-                  "Tests de autoevaluación por módulo",
-                  "Tutor IA entrenado con el curso",
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4" style={{ color: "var(--brand-accent)" }} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              {course && (
+                <p className="mt-4 text-sm font-medium text-muted-foreground">
+                  Acceso completo desde{" "}
+                  <span className="font-bold text-foreground">
+                    {formatPrice(course.price_cents, course.currency)}
+                  </span>{" "}
+                  · pago seguro con Stripe
+                </p>
+              )}
             </div>
 
-            {/* Tarjeta destacada: clase gratuita */}
-            <Link
-              to="/clase-gratis"
-              className="glass group reveal block rounded-3xl p-7 transition-transform duration-500 hover:-translate-y-1"
-            >
-              <span
-                className="chip"
-                style={{ backgroundColor: "var(--brand-accent)", color: "#12203a" }}
-              >
-                Gratis · sin tarjeta
-              </span>
-              <h2
-                className="mt-5 text-2xl font-bold leading-tight"
-                style={{ fontFamily: "var(--font-display-custom)" }}
-              >
-                {settings?.free_lesson_title ?? "Clase gratuita"}
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-white/70">
-                {settings?.free_lesson_subtitle ??
-                  "Mira la primera clase completa y comprueba el método antes de decidir."}
-              </p>
-              <span
-                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold"
-                style={{ color: "var(--brand-accent)" }}
-              >
-                Empezar ahora
-                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
-            </Link>
+            <ul className="mx-auto mt-12 flex max-w-3xl flex-wrap justify-center gap-x-7 gap-y-3 text-sm font-semibold text-muted-foreground">
+              {[
+                "Acceso de por vida",
+                "Plantillas descargables",
+                "Tests por módulo",
+                "Tutor IA del curso",
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-2">
+                  <CheckCircle2 className="size-4" style={{ color: "var(--brand-accent)" }} />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
-        {/* 2 · Clase gratuita + PDF del temario */}
+        {/* 2 · Clase gratuita + temario (solo alumnos) */}
         <section id="temario" className="container-x section-y">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow text-muted-foreground">Empieza sin pagar</p>
+            <p className="eyebrow" style={{ color: "var(--brand-accent)" }}>
+              Empieza sin pagar
+            </p>
             <h2 className="display-lg mt-3" style={{ fontFamily: "var(--font-display-custom)" }}>
               Conoce el curso antes de comprarlo
             </h2>
             <p className="lede mt-4 text-muted-foreground">
-              Una clase completa y el temario detallado en PDF. Sin compromiso.
+              Una clase completa en abierto. El temario detallado en PDF es material del curso.
             </p>
           </div>
 
@@ -212,12 +237,12 @@ function LandingPage() {
             <article className="surface card-lift flex flex-col p-8">
               <span
                 className="flex size-12 items-center justify-center rounded-2xl"
-                style={{ backgroundColor: "var(--brand)", color: "var(--brand-accent)" }}
+                style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
               >
                 <PlayCircle className="size-6" />
               </span>
               <h3
-                className="mt-6 text-xl font-bold"
+                className="mt-6 text-xl font-extrabold"
                 style={{ fontFamily: "var(--font-display-custom)" }}
               >
                 {settings?.free_lesson_title ?? "Clase gratuita"}
@@ -229,8 +254,8 @@ function LandingPage() {
               <Button
                 asChild
                 size="lg"
-                className="mt-7 w-fit rounded-full px-6"
-                style={{ backgroundColor: "var(--brand)", color: "#fff" }}
+                className="mt-7 w-fit rounded-full px-6 font-bold"
+                style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
               >
                 <Link to="/clase-gratis">
                   Ver la clase
@@ -242,40 +267,57 @@ function LandingPage() {
             <article className="surface card-lift flex flex-col p-8">
               <span
                 className="flex size-12 items-center justify-center rounded-2xl"
-                style={{ backgroundColor: "var(--brand-accent)", color: "#12203a" }}
+                style={{ backgroundColor: "var(--brand)", color: "#fff" }}
               >
-                <FileText className="size-6" />
+                {hasAccess ? <FileText className="size-6" /> : <Lock className="size-6" />}
               </span>
               <h3
-                className="mt-6 text-xl font-bold"
+                className="mt-6 text-xl font-extrabold"
                 style={{ fontFamily: "var(--font-display-custom)" }}
               >
                 {settings?.syllabus_title ?? "Temario completo en PDF"}
               </h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
-                {settings?.syllabus_description ??
-                  "Módulos, lecciones, duración y para quién es este curso."}
+                {hasAccess
+                  ? (settings?.syllabus_description ??
+                    "Módulos, lecciones, duración y para quién es este curso.")
+                  : "Material exclusivo para alumnos: al comprar el curso podrás descargar el temario completo en PDF."}
               </p>
-              {syllabusUrl ? (
+              {hasAccess ? (
+                syllabusUrl ? (
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="mt-7 w-fit rounded-full border-2 px-6 font-bold"
+                  >
+                    <a href={syllabusUrl} target="_blank" rel="noopener noreferrer">
+                      <Download className="size-4" />
+                      Descargar PDF
+                    </a>
+                  </Button>
+                ) : (
+                  <p className="mt-7 text-sm text-muted-foreground">
+                    El temario en PDF estará disponible en breve.
+                  </p>
+                )
+              ) : (
                 <Button
                   asChild
                   size="lg"
                   variant="outline"
-                  className="mt-7 w-fit rounded-full px-6"
+                  className="mt-7 w-fit rounded-full border-2 px-6 font-bold"
                 >
-                  <a href={syllabusUrl} target="_blank" rel="noopener noreferrer">
-                    <Download className="size-4" />
-                    Descargar PDF
-                  </a>
+                  <Link to={buyLink}>
+                    <Lock className="size-4" />
+                    Desbloquear con el curso
+                  </Link>
                 </Button>
-              ) : (
-                <p className="mt-7 text-sm text-muted-foreground">
-                  El temario en PDF estará disponible en breve.
-                </p>
               )}
             </article>
           </div>
         </section>
+
 
         {/* 3 · Beneficios / qué aprenderás */}
         <section className="bg-secondary/40">
@@ -399,7 +441,7 @@ function LandingPage() {
                 asChild
                 size="lg"
                 className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
-                style={{ backgroundColor: "var(--brand-accent)", color: "#12203a" }}
+                style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
               >
                 <Link to={buyLink}>{settings?.hero_cta ?? "Apuntarme al curso"}</Link>
               </Button>

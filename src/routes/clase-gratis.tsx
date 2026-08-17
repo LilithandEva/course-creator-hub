@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Download, FileText, PlayCircle } from "lucide-react";
+import { ArrowRight, Download, FileText, Lock, PlayCircle } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import { bunnyEmbedUrl, fetchLanding } from "@/lib/course";
+import { bunnyEmbedUrl, fetchLanding, fetchMyAccess } from "@/lib/course";
+import { useAuth } from "@/hooks/useAuth";
 import { fontStack, signedAssetUrl } from "@/lib/landing";
 
 export const Route = createFileRoute("/clase-gratis")({
@@ -28,20 +29,30 @@ export const Route = createFileRoute("/clase-gratis")({
 });
 
 function FreeLessonPage() {
+  const { user } = useAuth();
   const { data } = useQuery({ queryKey: ["landing"], queryFn: fetchLanding });
   const settings = data?.settings;
+  const course = data?.course;
   const fonts = fontStack(settings?.font_family);
   const embed = bunnyEmbedUrl(settings?.free_lesson_video_url);
 
+  const { data: access } = useQuery({
+    queryKey: ["my-access", course?.id, user?.id],
+    queryFn: () => fetchMyAccess(course!.id),
+    enabled: !!course?.id && !!user,
+  });
+  const hasAccess = !!access?.hasAccess;
+
   const { data: syllabusUrl } = useQuery({
-    queryKey: ["syllabus", settings?.syllabus_pdf_path],
+    queryKey: ["syllabus", settings?.syllabus_pdf_path, user?.id],
     queryFn: () => signedAssetUrl(settings?.syllabus_pdf_path),
-    enabled: !!settings?.syllabus_pdf_path,
+    enabled: !!settings?.syllabus_pdf_path && hasAccess,
   });
 
+
   const style = {
-    "--brand": settings?.primary_color ?? "#0B1D33",
-    "--brand-accent": settings?.accent_color ?? "#F5B544",
+    "--brand": settings?.primary_color ?? "#B3121B",
+    "--brand-accent": settings?.accent_color ?? "#E11D2E",
     "--font-display-custom": fonts.display,
     "--font-body-custom": fonts.body,
     fontFamily: "var(--font-body-custom)",
@@ -94,9 +105,9 @@ function FreeLessonPage() {
           <article className="surface card-lift flex flex-col p-8">
             <span
               className="flex size-12 items-center justify-center rounded-2xl"
-              style={{ backgroundColor: "var(--brand-accent)", color: "#12203a" }}
+              style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
             >
-              <FileText className="size-6" />
+              {hasAccess ? <FileText className="size-6" /> : <Lock className="size-6" />}
             </span>
             <h2
               className="mt-6 text-xl font-bold"
@@ -105,11 +116,29 @@ function FreeLessonPage() {
               {settings?.syllabus_title ?? "Temario completo en PDF"}
             </h2>
             <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
-              {settings?.syllabus_description ??
-                "Descarga el programa detallado: módulos, lecciones, duración y para quién es este curso."}
+              {hasAccess
+                ? (settings?.syllabus_description ??
+                  "Descarga el programa detallado: módulos, lecciones, duración y para quién es este curso.")
+                : "El temario en PDF es material exclusivo para alumnos del curso."}
             </p>
-            {syllabusUrl ? (
-              <Button asChild size="lg" variant="outline" className="mt-7 w-fit rounded-full px-6">
+            {!hasAccess ? (
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="mt-7 w-fit rounded-full border-2 px-6 font-bold"
+              >
+                <Link to="/comprar">
+                  <Lock className="size-4" /> Desbloquear con el curso
+                </Link>
+              </Button>
+            ) : syllabusUrl ? (
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="mt-7 w-fit rounded-full border-2 px-6 font-bold"
+              >
                 <a href={syllabusUrl} target="_blank" rel="noopener noreferrer">
                   <Download className="size-4" /> Descargar temario
                 </a>
