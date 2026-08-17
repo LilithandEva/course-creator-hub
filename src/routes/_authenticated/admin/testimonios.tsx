@@ -178,7 +178,7 @@ function TestimonialRow({
     enabled: !!form.photo_url,
   });
 
-  async function run(fn: () => Promise<{ error: { message: string } | null }>, msg: string) {
+  async function run(fn: () => PromiseLike<{ error: { message: string } | null }>, msg: string) {
     setBusy(true);
     const { error } = await fn();
     setBusy(false);
