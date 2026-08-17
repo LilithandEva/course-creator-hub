@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   fetchCourse,
   fetchCurriculum,
-  fetchMyEnrollment,
+  fetchMyAccess,
   fetchMyProgress,
 } from "@/lib/course";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,11 +24,12 @@ export const Route = createFileRoute("/_authenticated/curso")({
 function CoursePage() {
   const { data: course } = useQuery({ queryKey: ["course"], queryFn: fetchCourse });
 
-  const { data: enrollment, isLoading: loadingEnrollment } = useQuery({
-    queryKey: ["enrollment", course?.id],
-    queryFn: () => fetchMyEnrollment(course!.id),
+  const { data: access, isLoading: loadingEnrollment } = useQuery({
+    queryKey: ["access", course?.id],
+    queryFn: () => fetchMyAccess(course!.id),
     enabled: !!course?.id,
   });
+  const enrollment = access?.hasAccess ?? false;
 
   const { data: modules } = useQuery({
     queryKey: ["curriculum", course?.id],
@@ -58,9 +59,8 @@ function CoursePage() {
   const notify = useServerFn(notifyProgress);
   useEffect(() => {
     if (pct !== 100 || !course?.id) return;
-    const key = `course-completed-email:${course.id}`;
-    if (localStorage.getItem(key)) return;
-    localStorage.setItem(key, "1");
+    // Deduped server-side against the enrolment record, so it can't be re-sent
+    // from another browser or lost when local storage is cleared.
     void notify({ data: { kind: "course", courseTitle: course.title } }).catch(() => undefined);
   }, [pct, course?.id, course?.title, notify]);
 

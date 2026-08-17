@@ -48,6 +48,9 @@ export function SiteHeader({ variant = "light" }: { variant?: "light" | "ink" })
               <Button asChild variant={ink ? "secondary" : "ghost"} size="sm">
                 <Link to="/curso">Mi curso</Link>
               </Button>
+              <Button asChild variant={ink ? "secondary" : "ghost"} size="sm">
+                <Link to="/cuenta">Mi cuenta</Link>
+              </Button>
               <Button variant="outline" size="sm" onClick={signOut}>
                 Salir
               </Button>

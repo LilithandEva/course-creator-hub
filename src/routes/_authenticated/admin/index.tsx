@@ -81,6 +81,18 @@ function AdminStudents() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const revoke = useMutation({
+    mutationFn: async (enrollmentId: string) => {
+      const { error } = await supabase.from("enrollments").delete().eq("id", enrollmentId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-students"] });
+      toast.success("Acceso retirado");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const rows = (data?.profiles ?? []).map((p) => {
     const enrollment = (data?.enrollments ?? []).find((e) => e.user_id === p.id);
     const done = (data?.progress ?? []).filter((x) => x.user_id === p.id).length;
@@ -169,9 +181,24 @@ function AdminStudents() {
                   </TableCell>
                   <TableCell>
                     {r.enrollment ? (
-                      <Badge variant={r.enrollment.source === "manual" ? "secondary" : "default"}>
-                        {r.enrollment.source === "manual" ? "Manual" : "Pago"}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={r.enrollment.source === "manual" ? "secondary" : "default"}>
+                          {r.enrollment.source === "manual" ? "Manual" : "Pago"}
+                        </Badge>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 px-2 text-xs text-destructive hover:text-destructive"
+                          disabled={revoke.isPending}
+                          onClick={() => {
+                            if (confirm(`¿Retirar el acceso a ${r.profile.email}?`)) {
+                              revoke.mutate(r.enrollment!.id);
+                            }
+                          }}
+                        >
+                          Retirar
+                        </Button>
+                      </div>
                     ) : (
                       <span className="text-xs text-muted-foreground">Sin acceso</span>
                     )}

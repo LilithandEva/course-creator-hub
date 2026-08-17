@@ -19,12 +19,15 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as AuthenticatedCuentaRouteImport } from './routes/_authenticated/cuenta'
 import { Route as AuthenticatedCursoRouteImport } from './routes/_authenticated/curso'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminContenidoRouteImport } from './routes/_authenticated/admin/contenido'
 import { Route as AuthenticatedAdminPaginaRouteImport } from './routes/_authenticated/admin/pagina'
+import { Route as AuthenticatedAdminPagosRouteImport } from './routes/_authenticated/admin/pagos'
+import { Route as AuthenticatedAdminPreciosRouteImport } from './routes/_authenticated/admin/precios'
 import { Route as AuthenticatedAdminTutorRouteImport } from './routes/_authenticated/admin/tutor'
 import { Route as AuthenticatedLeccionLessonIdRouteImport } from './routes/_authenticated/leccion.$lessonId'
 import { Route as AuthenticatedTestQuizIdRouteImport } from './routes/_authenticated/test.$quizId'
@@ -81,6 +84,11 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCuentaRoute = AuthenticatedCuentaRouteImport.update({
+  id: '/cuenta',
+  path: '/cuenta',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCursoRoute = AuthenticatedCursoRouteImport.update({
   id: '/curso',
   path: '/curso',
@@ -112,6 +120,17 @@ const AuthenticatedAdminPaginaRoute =
   AuthenticatedAdminPaginaRouteImport.update({
     id: '/pagina',
     path: '/pagina',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminPagosRoute = AuthenticatedAdminPagosRouteImport.update({
+  id: '/pagos',
+  path: '/pagos',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminPreciosRoute =
+  AuthenticatedAdminPreciosRouteImport.update({
+    id: '/precios',
+    path: '/precios',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminTutorRoute = AuthenticatedAdminTutorRouteImport.update({
@@ -147,11 +166,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/cuenta': typeof AuthenticatedCuentaRoute
   '/curso': typeof AuthenticatedCursoRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/contenido': typeof AuthenticatedAdminContenidoRoute
   '/admin/pagina': typeof AuthenticatedAdminPaginaRoute
+  '/admin/pagos': typeof AuthenticatedAdminPagosRoute
+  '/admin/precios': typeof AuthenticatedAdminPreciosRoute
   '/admin/tutor': typeof AuthenticatedAdminTutorRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
@@ -167,11 +189,14 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/cuenta': typeof AuthenticatedCuentaRoute
   '/curso': typeof AuthenticatedCursoRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/contenido': typeof AuthenticatedAdminContenidoRoute
   '/admin/pagina': typeof AuthenticatedAdminPaginaRoute
+  '/admin/pagos': typeof AuthenticatedAdminPagosRoute
+  '/admin/precios': typeof AuthenticatedAdminPreciosRoute
   '/admin/tutor': typeof AuthenticatedAdminTutorRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
@@ -190,11 +215,14 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_authenticated/cuenta': typeof AuthenticatedCuentaRoute
   '/_authenticated/curso': typeof AuthenticatedCursoRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/contenido': typeof AuthenticatedAdminContenidoRoute
   '/_authenticated/admin/pagina': typeof AuthenticatedAdminPaginaRoute
+  '/_authenticated/admin/pagos': typeof AuthenticatedAdminPagosRoute
+  '/_authenticated/admin/precios': typeof AuthenticatedAdminPreciosRoute
   '/_authenticated/admin/tutor': typeof AuthenticatedAdminTutorRoute
   '/_authenticated/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/_authenticated/test/$quizId': typeof AuthenticatedTestQuizIdRoute
@@ -213,11 +241,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/cuenta'
     | '/curso'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/contenido'
     | '/admin/pagina'
+    | '/admin/pagos'
+    | '/admin/precios'
     | '/admin/tutor'
     | '/leccion/$lessonId'
     | '/test/$quizId'
@@ -233,11 +264,14 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/cuenta'
     | '/curso'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/contenido'
     | '/admin/pagina'
+    | '/admin/pagos'
+    | '/admin/precios'
     | '/admin/tutor'
     | '/leccion/$lessonId'
     | '/test/$quizId'
@@ -255,11 +289,14 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/_authenticated/cuenta'
     | '/_authenticated/curso'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/contenido'
     | '/_authenticated/admin/pagina'
+    | '/_authenticated/admin/pagos'
+    | '/_authenticated/admin/precios'
     | '/_authenticated/admin/tutor'
     | '/_authenticated/leccion/$lessonId'
     | '/_authenticated/test/$quizId'
@@ -354,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/cuenta': {
+      id: '/_authenticated/cuenta'
+      path: '/cuenta'
+      fullPath: '/cuenta'
+      preLoaderRoute: typeof AuthenticatedCuentaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/curso': {
       id: '/_authenticated/curso'
       path: '/curso'
@@ -396,6 +440,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPaginaRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/pagos': {
+      id: '/_authenticated/admin/pagos'
+      path: '/pagos'
+      fullPath: '/admin/pagos'
+      preLoaderRoute: typeof AuthenticatedAdminPagosRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/precios': {
+      id: '/_authenticated/admin/precios'
+      path: '/precios'
+      fullPath: '/admin/precios'
+      preLoaderRoute: typeof AuthenticatedAdminPreciosRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/tutor': {
       id: '/_authenticated/admin/tutor'
       path: '/tutor'
@@ -430,6 +488,8 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminContenidoRoute: typeof AuthenticatedAdminContenidoRoute
   AuthenticatedAdminPaginaRoute: typeof AuthenticatedAdminPaginaRoute
+  AuthenticatedAdminPagosRoute: typeof AuthenticatedAdminPagosRoute
+  AuthenticatedAdminPreciosRoute: typeof AuthenticatedAdminPreciosRoute
   AuthenticatedAdminTutorRoute: typeof AuthenticatedAdminTutorRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -438,6 +498,8 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
   {
     AuthenticatedAdminContenidoRoute: AuthenticatedAdminContenidoRoute,
     AuthenticatedAdminPaginaRoute: AuthenticatedAdminPaginaRoute,
+    AuthenticatedAdminPagosRoute: AuthenticatedAdminPagosRoute,
+    AuthenticatedAdminPreciosRoute: AuthenticatedAdminPreciosRoute,
     AuthenticatedAdminTutorRoute: AuthenticatedAdminTutorRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
@@ -449,6 +511,7 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedCuentaRoute: typeof AuthenticatedCuentaRoute
   AuthenticatedCursoRoute: typeof AuthenticatedCursoRoute
   AuthenticatedLeccionLessonIdRoute: typeof AuthenticatedLeccionLessonIdRoute
   AuthenticatedTestQuizIdRoute: typeof AuthenticatedTestQuizIdRoute
@@ -456,6 +519,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedCuentaRoute: AuthenticatedCuentaRoute,
   AuthenticatedCursoRoute: AuthenticatedCursoRoute,
   AuthenticatedLeccionLessonIdRoute: AuthenticatedLeccionLessonIdRoute,
   AuthenticatedTestQuizIdRoute: AuthenticatedTestQuizIdRoute,

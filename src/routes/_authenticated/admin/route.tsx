@@ -12,6 +12,8 @@ const tabs = [
   { to: "/admin", label: "Alumnos" },
   { to: "/admin/contenido", label: "Contenido" },
   { to: "/admin/pagina", label: "Página de venta" },
+  { to: "/admin/precios", label: "Precios" },
+  { to: "/admin/pagos", label: "Pagos" },
   { to: "/admin/tutor", label: "Tutor IA" },
 ] as const;
 

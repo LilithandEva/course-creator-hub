@@ -26,4 +26,12 @@ export function getStripeEnvironment(): StripeEnv {
   return paymentsEnvironment();
 }
 
+export type CoursePlan = "onetime" | "monthly" | "yearly";
+
 export const COURSE_PRICE_ID = "ecommerce_formation_onetime";
+
+export const PLAN_LABELS: Record<CoursePlan, string> = {
+  onetime: "Pago único · acceso de por vida",
+  monthly: "Suscripción mensual",
+  yearly: "Suscripción anual",
+};

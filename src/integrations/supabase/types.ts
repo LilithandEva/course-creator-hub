@@ -423,6 +423,7 @@ export type Database = {
           email: string | null
           id: string
           provider: string
+          provider_payment_intent: string | null
           provider_session_id: string | null
           receipt_url: string | null
           refunded_at: string | null
@@ -438,6 +439,7 @@ export type Database = {
           email?: string | null
           id?: string
           provider?: string
+          provider_payment_intent?: string | null
           provider_session_id?: string | null
           receipt_url?: string | null
           refunded_at?: string | null
@@ -453,6 +455,7 @@ export type Database = {
           email?: string | null
           id?: string
           provider?: string
+          provider_payment_intent?: string | null
           provider_session_id?: string | null
           receipt_url?: string | null
           refunded_at?: string | null
