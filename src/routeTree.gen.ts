@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ClaseGratisRouteImport } from './routes/clase-gratis'
 import { Route as ComprarRouteImport } from './routes/comprar'
+import { Route as CreadorRouteImport } from './routes/creador'
 import { Route as GraciasRouteImport } from './routes/gracias'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -24,10 +26,12 @@ import { Route as AuthenticatedCursoRouteImport } from './routes/_authenticated/
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminClaseRouteImport } from './routes/_authenticated/admin/clase'
 import { Route as AuthenticatedAdminContenidoRouteImport } from './routes/_authenticated/admin/contenido'
 import { Route as AuthenticatedAdminPaginaRouteImport } from './routes/_authenticated/admin/pagina'
 import { Route as AuthenticatedAdminPagosRouteImport } from './routes/_authenticated/admin/pagos'
 import { Route as AuthenticatedAdminPreciosRouteImport } from './routes/_authenticated/admin/precios'
+import { Route as AuthenticatedAdminTestimoniosRouteImport } from './routes/_authenticated/admin/testimonios'
 import { Route as AuthenticatedAdminTutorRouteImport } from './routes/_authenticated/admin/tutor'
 import { Route as AuthenticatedLeccionLessonIdRouteImport } from './routes/_authenticated/leccion.$lessonId'
 import { Route as AuthenticatedTestQuizIdRouteImport } from './routes/_authenticated/test.$quizId'
@@ -47,9 +51,19 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClaseGratisRoute = ClaseGratisRouteImport.update({
+  id: '/clase-gratis',
+  path: '/clase-gratis',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ComprarRoute = ComprarRouteImport.update({
   id: '/comprar',
   path: '/comprar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreadorRoute = CreadorRouteImport.update({
+  id: '/creador',
+  path: '/creador',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GraciasRoute = GraciasRouteImport.update({
@@ -110,6 +124,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminClaseRoute = AuthenticatedAdminClaseRouteImport.update({
+  id: '/clase',
+  path: '/clase',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminContenidoRoute =
   AuthenticatedAdminContenidoRouteImport.update({
     id: '/contenido',
@@ -131,6 +150,12 @@ const AuthenticatedAdminPreciosRoute =
   AuthenticatedAdminPreciosRouteImport.update({
     id: '/precios',
     path: '/precios',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminTestimoniosRoute =
+  AuthenticatedAdminTestimoniosRouteImport.update({
+    id: '/testimonios',
+    path: '/testimonios',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminTutorRoute = AuthenticatedAdminTutorRouteImport.update({
@@ -159,7 +184,9 @@ const ApiPublicPaymentsWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/clase-gratis': typeof ClaseGratisRoute
   '/comprar': typeof ComprarRoute
+  '/creador': typeof CreadorRoute
   '/gracias': typeof GraciasRoute
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -170,10 +197,12 @@ export interface FileRoutesByFullPath {
   '/curso': typeof AuthenticatedCursoRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/clase': typeof AuthenticatedAdminClaseRoute
   '/admin/contenido': typeof AuthenticatedAdminContenidoRoute
   '/admin/pagina': typeof AuthenticatedAdminPaginaRoute
   '/admin/pagos': typeof AuthenticatedAdminPagosRoute
   '/admin/precios': typeof AuthenticatedAdminPreciosRoute
+  '/admin/testimonios': typeof AuthenticatedAdminTestimoniosRoute
   '/admin/tutor': typeof AuthenticatedAdminTutorRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
@@ -183,7 +212,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/clase-gratis': typeof ClaseGratisRoute
   '/comprar': typeof ComprarRoute
+  '/creador': typeof CreadorRoute
   '/gracias': typeof GraciasRoute
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -193,10 +224,12 @@ export interface FileRoutesByTo {
   '/curso': typeof AuthenticatedCursoRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/clase': typeof AuthenticatedAdminClaseRoute
   '/admin/contenido': typeof AuthenticatedAdminContenidoRoute
   '/admin/pagina': typeof AuthenticatedAdminPaginaRoute
   '/admin/pagos': typeof AuthenticatedAdminPagosRoute
   '/admin/precios': typeof AuthenticatedAdminPreciosRoute
+  '/admin/testimonios': typeof AuthenticatedAdminTestimoniosRoute
   '/admin/tutor': typeof AuthenticatedAdminTutorRoute
   '/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/test/$quizId': typeof AuthenticatedTestQuizIdRoute
@@ -208,7 +241,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/clase-gratis': typeof ClaseGratisRoute
   '/comprar': typeof ComprarRoute
+  '/creador': typeof CreadorRoute
   '/gracias': typeof GraciasRoute
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -219,10 +254,12 @@ export interface FileRoutesById {
   '/_authenticated/curso': typeof AuthenticatedCursoRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_authenticated/admin/clase': typeof AuthenticatedAdminClaseRoute
   '/_authenticated/admin/contenido': typeof AuthenticatedAdminContenidoRoute
   '/_authenticated/admin/pagina': typeof AuthenticatedAdminPaginaRoute
   '/_authenticated/admin/pagos': typeof AuthenticatedAdminPagosRoute
   '/_authenticated/admin/precios': typeof AuthenticatedAdminPreciosRoute
+  '/_authenticated/admin/testimonios': typeof AuthenticatedAdminTestimoniosRoute
   '/_authenticated/admin/tutor': typeof AuthenticatedAdminTutorRoute
   '/_authenticated/leccion/$lessonId': typeof AuthenticatedLeccionLessonIdRoute
   '/_authenticated/test/$quizId': typeof AuthenticatedTestQuizIdRoute
@@ -234,7 +271,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/clase-gratis'
     | '/comprar'
+    | '/creador'
     | '/gracias'
     | '/mcp'
     | '/reset-password'
@@ -245,10 +284,12 @@ export interface FileRouteTypes {
     | '/curso'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/clase'
     | '/admin/contenido'
     | '/admin/pagina'
     | '/admin/pagos'
     | '/admin/precios'
+    | '/admin/testimonios'
     | '/admin/tutor'
     | '/leccion/$lessonId'
     | '/test/$quizId'
@@ -258,7 +299,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/clase-gratis'
     | '/comprar'
+    | '/creador'
     | '/gracias'
     | '/mcp'
     | '/reset-password'
@@ -268,10 +311,12 @@ export interface FileRouteTypes {
     | '/curso'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/clase'
     | '/admin/contenido'
     | '/admin/pagina'
     | '/admin/pagos'
     | '/admin/precios'
+    | '/admin/testimonios'
     | '/admin/tutor'
     | '/leccion/$lessonId'
     | '/test/$quizId'
@@ -282,7 +327,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/clase-gratis'
     | '/comprar'
+    | '/creador'
     | '/gracias'
     | '/mcp'
     | '/reset-password'
@@ -293,10 +340,12 @@ export interface FileRouteTypes {
     | '/_authenticated/curso'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_authenticated/admin/clase'
     | '/_authenticated/admin/contenido'
     | '/_authenticated/admin/pagina'
     | '/_authenticated/admin/pagos'
     | '/_authenticated/admin/precios'
+    | '/_authenticated/admin/testimonios'
     | '/_authenticated/admin/tutor'
     | '/_authenticated/leccion/$lessonId'
     | '/_authenticated/test/$quizId'
@@ -308,7 +357,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ClaseGratisRoute: typeof ClaseGratisRoute
   ComprarRoute: typeof ComprarRoute
+  CreadorRoute: typeof CreadorRoute
   GraciasRoute: typeof GraciasRoute
   McpRoute: typeof McpRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -342,11 +393,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/clase-gratis': {
+      id: '/clase-gratis'
+      path: '/clase-gratis'
+      fullPath: '/clase-gratis'
+      preLoaderRoute: typeof ClaseGratisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/comprar': {
       id: '/comprar'
       path: '/comprar'
       fullPath: '/comprar'
       preLoaderRoute: typeof ComprarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/creador': {
+      id: '/creador'
+      path: '/creador'
+      fullPath: '/creador'
+      preLoaderRoute: typeof CreadorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gracias': {
@@ -426,6 +491,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/clase': {
+      id: '/_authenticated/admin/clase'
+      path: '/clase'
+      fullPath: '/admin/clase'
+      preLoaderRoute: typeof AuthenticatedAdminClaseRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/contenido': {
       id: '/_authenticated/admin/contenido'
       path: '/contenido'
@@ -452,6 +524,13 @@ declare module '@tanstack/react-router' {
       path: '/precios'
       fullPath: '/admin/precios'
       preLoaderRoute: typeof AuthenticatedAdminPreciosRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/testimonios': {
+      id: '/_authenticated/admin/testimonios'
+      path: '/testimonios'
+      fullPath: '/admin/testimonios'
+      preLoaderRoute: typeof AuthenticatedAdminTestimoniosRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/tutor': {
@@ -486,20 +565,24 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminClaseRoute: typeof AuthenticatedAdminClaseRoute
   AuthenticatedAdminContenidoRoute: typeof AuthenticatedAdminContenidoRoute
   AuthenticatedAdminPaginaRoute: typeof AuthenticatedAdminPaginaRoute
   AuthenticatedAdminPagosRoute: typeof AuthenticatedAdminPagosRoute
   AuthenticatedAdminPreciosRoute: typeof AuthenticatedAdminPreciosRoute
+  AuthenticatedAdminTestimoniosRoute: typeof AuthenticatedAdminTestimoniosRoute
   AuthenticatedAdminTutorRoute: typeof AuthenticatedAdminTutorRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminClaseRoute: AuthenticatedAdminClaseRoute,
     AuthenticatedAdminContenidoRoute: AuthenticatedAdminContenidoRoute,
     AuthenticatedAdminPaginaRoute: AuthenticatedAdminPaginaRoute,
     AuthenticatedAdminPagosRoute: AuthenticatedAdminPagosRoute,
     AuthenticatedAdminPreciosRoute: AuthenticatedAdminPreciosRoute,
+    AuthenticatedAdminTestimoniosRoute: AuthenticatedAdminTestimoniosRoute,
     AuthenticatedAdminTutorRoute: AuthenticatedAdminTutorRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
@@ -532,7 +615,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ClaseGratisRoute: ClaseGratisRoute,
   ComprarRoute: ComprarRoute,
+  CreadorRoute: CreadorRoute,
   GraciasRoute: GraciasRoute,
   McpRoute: McpRoute,
   ResetPasswordRoute: ResetPasswordRoute,

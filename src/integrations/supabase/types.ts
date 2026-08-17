@@ -220,42 +220,66 @@ export type Database = {
           about_body: string
           about_title: string
           accent_color: string
+          benefits: Json
           course_id: string | null
+          faq: Json
           font_family: string
+          free_lesson_subtitle: string
+          free_lesson_title: string
+          free_lesson_video_url: string | null
           gallery: Json
           hero_cta: string
           hero_subtitle: string
           hero_title: string
           id: string
           primary_color: string
+          syllabus_description: string
+          syllabus_pdf_path: string | null
+          syllabus_title: string
           updated_at: string
         }
         Insert: {
           about_body?: string
           about_title?: string
           accent_color?: string
+          benefits?: Json
           course_id?: string | null
+          faq?: Json
           font_family?: string
+          free_lesson_subtitle?: string
+          free_lesson_title?: string
+          free_lesson_video_url?: string | null
           gallery?: Json
           hero_cta?: string
           hero_subtitle?: string
           hero_title?: string
           id?: string
           primary_color?: string
+          syllabus_description?: string
+          syllabus_pdf_path?: string | null
+          syllabus_title?: string
           updated_at?: string
         }
         Update: {
           about_body?: string
           about_title?: string
           accent_color?: string
+          benefits?: Json
           course_id?: string | null
+          faq?: Json
           font_family?: string
+          free_lesson_subtitle?: string
+          free_lesson_title?: string
+          free_lesson_video_url?: string | null
           gallery?: Json
           hero_cta?: string
           hero_subtitle?: string
           hero_title?: string
           id?: string
           primary_color?: string
+          syllabus_description?: string
+          syllabus_pdf_path?: string | null
+          syllabus_title?: string
           updated_at?: string
         }
         Relationships: [
