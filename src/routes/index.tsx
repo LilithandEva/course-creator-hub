@@ -29,7 +29,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { bunnyEmbedUrl, fetchLanding, fetchMyAccess, formatPrice } from "@/lib/course";
+import {
+  bunnyEmbedUrl,
+  fetchLanding,
+  fetchMyAccess,
+  fetchPublicCurriculum,
+  formatPrice,
+} from "@/lib/course";
 import { fontStack, signedAssetUrl, signedAssetUrls } from "@/lib/landing";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
