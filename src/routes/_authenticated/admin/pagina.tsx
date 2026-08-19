@@ -55,10 +55,22 @@ function AdminLanding() {
     primary_color: "#B3121B",
     accent_color: "#E11D2E",
     font_family: "geometric",
+    students_count: 0,
+    rating_average: 0,
+    reviews_count: 0,
+    social_proof_note: "",
+    curriculum_title: "",
+    curriculum_description: "",
+    guarantee_title: "",
+    guarantee_body: "",
+    certificate_title: "",
+    certificate_body: "",
+    og_image_url: "",
   });
   const [gallery, setGallery] = useState<string[]>([]);
   const [benefits, setBenefits] = useState<Benefit[]>([]);
   const [faq, setFaq] = useState<Faq[]>([]);
+  const [logos, setLogos] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
@@ -72,17 +84,32 @@ function AdminLanding() {
       primary_color: settings.primary_color,
       accent_color: settings.accent_color,
       font_family: settings.font_family,
+      students_count: settings.students_count ?? 0,
+      rating_average: Number(settings.rating_average ?? 0),
+      reviews_count: settings.reviews_count ?? 0,
+      social_proof_note: settings.social_proof_note ?? "",
+      curriculum_title: settings.curriculum_title ?? "",
+      curriculum_description: settings.curriculum_description ?? "",
+      guarantee_title: settings.guarantee_title ?? "",
+      guarantee_body: settings.guarantee_body ?? "",
+      certificate_title: settings.certificate_title ?? "",
+      certificate_body: settings.certificate_body ?? "",
+      og_image_url: settings.og_image_url ?? "",
     });
     setGallery(Array.isArray(settings.gallery) ? (settings.gallery as string[]) : []);
     setBenefits(Array.isArray(settings.benefits) ? (settings.benefits as Benefit[]) : []);
     setFaq(Array.isArray(settings.faq) ? (settings.faq as Faq[]) : []);
+    setLogos(
+      Array.isArray(settings.featured_logos) ? (settings.featured_logos as string[]) : [],
+    );
   }, [settings]);
+
 
   const save = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
         .from("landing_settings")
-        .update({ ...form, gallery, benefits, faq })
+        .update({ ...form, gallery, benefits, faq, featured_logos: logos })
         .eq("id", settings!.id);
       if (error) throw error;
     },
@@ -266,6 +293,142 @@ function AdminLanding() {
       </section>
 
       <section className="surface space-y-4 p-6">
+        <h2 className="font-display text-lg font-bold">Prueba social</h2>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <Label>Nº de alumnos</Label>
+            <Input
+              type="number"
+              value={form.students_count}
+              onChange={(e) => setForm({ ...form, students_count: Number(e.target.value) })}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Valoración media (0-5)</Label>
+            <Input
+              type="number"
+              step="0.1"
+              min="0"
+              max="5"
+              value={form.rating_average}
+              onChange={(e) => setForm({ ...form, rating_average: Number(e.target.value) })}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Nº de reseñas</Label>
+            <Input
+              type="number"
+              value={form.reviews_count}
+              onChange={(e) => setForm({ ...form, reviews_count: Number(e.target.value) })}
+              className="mt-1"
+            />
+          </div>
+        </div>
+        <div>
+          <Label>Nota debajo de la prueba social</Label>
+          <Input
+            value={form.social_proof_note}
+            onChange={(e) => setForm({ ...form, social_proof_note: e.target.value })}
+            className="mt-1"
+            placeholder="Ej. Valoración media de los alumnos del último año"
+          />
+        </div>
+        <div>
+          <Label>Logos "como visto en" (nombres de marca)</Label>
+          <div className="mt-2 space-y-2">
+            {logos.map((l, i) => (
+              <div key={i} className="flex gap-2">
+                <Input
+                  value={l}
+                  onChange={(e) => setLogos(logos.map((x, j) => (j === i ? e.target.value : x)))}
+                  placeholder="Ej. Forbes"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setLogos(logos.filter((_, j) => j !== i))}
+                  aria-label="Eliminar logo"
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
+            ))}
+            <Button variant="outline" className="rounded-full" onClick={() => setLogos([...logos, ""])}>
+              <Plus className="size-4" /> Añadir marca
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <section className="surface space-y-4 p-6">
+        <h2 className="font-display text-lg font-bold">Temario, garantía y certificado</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <Label>Título del temario</Label>
+            <Input
+              value={form.curriculum_title}
+              onChange={(e) => setForm({ ...form, curriculum_title: e.target.value })}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Descripción del temario</Label>
+            <Input
+              value={form.curriculum_description}
+              onChange={(e) => setForm({ ...form, curriculum_description: e.target.value })}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Título de la garantía</Label>
+            <Input
+              value={form.guarantee_title}
+              onChange={(e) => setForm({ ...form, guarantee_title: e.target.value })}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Título del certificado</Label>
+            <Input
+              value={form.certificate_title}
+              onChange={(e) => setForm({ ...form, certificate_title: e.target.value })}
+              className="mt-1"
+            />
+          </div>
+        </div>
+        <div>
+          <Label>Texto de la garantía / reembolso</Label>
+          <Textarea
+            rows={3}
+            value={form.guarantee_body}
+            onChange={(e) => setForm({ ...form, guarantee_body: e.target.value })}
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label>Texto del certificado</Label>
+          <Textarea
+            rows={3}
+            value={form.certificate_body}
+            onChange={(e) => setForm({ ...form, certificate_body: e.target.value })}
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label>Imagen para compartir en redes (URL https pública)</Label>
+          <Input
+            value={form.og_image_url}
+            onChange={(e) => setForm({ ...form, og_image_url: e.target.value })}
+            className="mt-1"
+            placeholder="https://…/portada.jpg"
+          />
+        </div>
+      </section>
+
+      <section className="surface space-y-4 p-6">
+
         <h2 className="font-display text-lg font-bold">Beneficios</h2>
         {benefits.map((b, i) => (
           <div key={i} className="grid gap-2 rounded-lg border border-border p-4 sm:grid-cols-[1fr_2fr_auto]">

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
+  Award,
   BadgeCheck,
   CheckCircle2,
   Download,
@@ -29,31 +31,57 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { bunnyEmbedUrl, fetchLanding, fetchMyAccess, formatPrice } from "@/lib/course";
+import {
+  bunnyEmbedUrl,
+  fetchLanding,
+  fetchMyAccess,
+  fetchPublicCurriculum,
+  formatPrice,
+} from "@/lib/course";
 import { fontStack, signedAssetUrl, signedAssetUrls } from "@/lib/landing";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "eCommerce Formation · Curso online de eCommerce | TuCurso.com" },
-      {
-        name: "description",
-        content:
-          "Empieza con una clase gratuita y el temario en PDF. Curso online para lanzar y escalar tu tienda: vídeo, plantillas, tests y campus privado.",
-      },
-      { property: "og:title", content: "eCommerce Formation · Clase gratuita y temario en PDF" },
-      {
-        property: "og:description",
-        content:
-          "Mira la clase gratuita, descarga el temario y decide después: campus privado con vídeo, plantillas y tests.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: async () => {
+    const { data } = await supabase
+      .from("landing_settings")
+      .select("og_image_url")
+      .limit(1)
+      .maybeSingle();
+    return { ogImage: data?.og_image_url ?? null };
+  },
+  head: ({ loaderData }) => {
+    const ogImage = loaderData?.ogImage;
+    return {
+      meta: [
+        { title: "eCommerce Formation · Curso online de eCommerce | TuCurso.com" },
+        {
+          name: "description",
+          content:
+            "Empieza con una clase gratuita y el temario en PDF. Curso online para lanzar y escalar tu tienda: vídeo, plantillas, tests y campus privado.",
+        },
+        { property: "og:title", content: "eCommerce Formation · Clase gratuita y temario en PDF" },
+        {
+          property: "og:description",
+          content:
+            "Mira la clase gratuita, descarga el temario y decide después: campus privado con vídeo, plantillas y tests.",
+        },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(ogImage && ogImage.startsWith("https://")
+          ? [
+              { property: "og:image", content: ogImage },
+              { name: "twitter:image", content: ogImage },
+            ]
+          : []),
+      ],
+    };
+  },
   component: LandingPage,
 });
+
 
 type Benefit = { title: string; body: string };
 type Faq = { q: string; a: string };
@@ -88,6 +116,22 @@ function LandingPage() {
     queryFn: () => signedAssetUrl(settings?.syllabus_pdf_path),
     enabled: !!settings?.syllabus_pdf_path && hasAccess,
   });
+
+  const { data: publicCurriculum } = useQuery({
+    queryKey: ["public-curriculum", course?.id],
+    queryFn: () => fetchPublicCurriculum(course!.id),
+    enabled: !!course?.id,
+  });
+
+  const logos = (Array.isArray(settings?.featured_logos)
+    ? settings.featured_logos
+    : []) as string[];
+  const rating = Number(settings?.rating_average ?? 0);
+  const [priceRevealed, setPriceRevealed] = useState(false);
+  const hasDiscount =
+    !!course?.compare_at_price_cents && course.compare_at_price_cents > course.price_cents;
+
+
 
   const heroEmbed = bunnyEmbedUrl(settings?.free_lesson_video_url);
 
@@ -219,6 +263,73 @@ function LandingPage() {
           </div>
         </section>
 
+        {/* 1b · Prueba social cuantificada */}
+        {(settings?.students_count || rating > 0 || logos.length > 0) && (
+          <section className="border-y border-border bg-secondary/40">
+            <div className="container-x py-10">
+              <div className="grid items-center gap-8 md:grid-cols-[auto_1fr]">
+                <div className="flex flex-wrap items-center justify-center gap-10">
+                  {!!settings?.students_count && (
+                    <div className="text-center">
+                      <p
+                        className="text-4xl font-extrabold"
+                        style={{ fontFamily: "var(--font-display-custom)" }}
+                      >
+                        {new Intl.NumberFormat("es-ES").format(settings.students_count)}+
+                      </p>
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        Alumnos
+                      </p>
+                    </div>
+                  )}
+                  {rating > 0 && (
+                    <div className="text-center">
+                      <div
+                        className="flex items-center justify-center gap-1"
+                        style={{ color: "var(--brand-accent)" }}
+                        aria-label={`Valoración media ${rating} sobre 5`}
+                      >
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`size-5 ${i < Math.round(rating) ? "fill-current" : "opacity-30"}`}
+                          />
+                        ))}
+                      </div>
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        {rating.toFixed(1)}/5
+                        {!!settings?.reviews_count && ` · ${settings.reviews_count} reseñas`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {logos.length > 0 && (
+                  <div className="text-center md:text-right">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                      Como visto en
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 md:justify-end">
+                      {logos.map((logo) => (
+                        <span key={logo} className="text-lg font-bold text-foreground/60">
+                          {logo}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              {settings?.social_proof_note && (
+                <p className="mt-6 text-center text-sm text-muted-foreground">
+                  {settings.social_proof_note}
+                </p>
+              )}
+            </div>
+          </section>
+        )}
+
+
+
         {/* 2 · Clase gratuita + temario (solo alumnos) */}
         <section id="temario" className="container-x section-y">
           <div className="mx-auto max-w-2xl text-center">
@@ -319,7 +430,100 @@ function LandingPage() {
         </section>
 
 
+        {/* 2b · Temario en la página (acordeón) */}
+        {(publicCurriculum ?? []).length > 0 && (
+          <section className="bg-background">
+            <div className="container-x section-y">
+              <div className="mx-auto max-w-2xl text-center">
+                <p className="eyebrow" style={{ color: "var(--brand-accent)" }}>
+                  Programa completo
+                </p>
+                <h2
+                  className="display-lg mt-3"
+                  style={{ fontFamily: "var(--font-display-custom)" }}
+                >
+                  {settings?.curriculum_title ?? "El temario, módulo a módulo"}
+                </h2>
+                <p className="lede mt-4 text-muted-foreground">
+                  {settings?.curriculum_description ??
+                    "Esto es exactamente lo que vas a ver dentro del campus."}
+                </p>
+              </div>
+
+              <div className="surface mx-auto mt-10 max-w-3xl px-6 py-2">
+                <Accordion type="single" collapsible>
+                  {(publicCurriculum ?? []).map((mod, i) => (
+                    <AccordionItem key={mod.id} value={mod.id}>
+                      <AccordionTrigger className="text-left">
+                        <span className="flex flex-1 items-center gap-3 pr-3">
+                          <span
+                            className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                            style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                          >
+                            {i + 1}
+                          </span>
+                          <span className="text-base font-bold">{mod.title}</span>
+                          <span className="ml-auto whitespace-nowrap text-xs font-medium text-muted-foreground">
+                            {mod.lessons.length} lecciones
+                            {mod.has_quiz && " · test"}
+                          </span>
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        {mod.description && (
+                          <p className="mb-3 text-sm text-muted-foreground">{mod.description}</p>
+                        )}
+                        <ul className="space-y-2">
+                          {mod.lessons.map((l) => (
+                            <li key={l.id} className="flex items-center gap-2 text-sm">
+                              <PlayCircle
+                                className="size-4 shrink-0"
+                                style={{ color: "var(--brand-accent)" }}
+                              />
+                              <span className="flex-1">{l.title}</span>
+                              {l.duration_minutes ? (
+                                <span className="text-xs text-muted-foreground">
+                                  {l.duration_minutes} min
+                                </span>
+                              ) : null}
+                            </li>
+                          ))}
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 2c · Certificación */}
+        <section className="container-x pb-4">
+          <div className="surface flex flex-col items-center gap-6 p-8 text-center sm:flex-row sm:text-left">
+            <span
+              className="flex size-16 shrink-0 items-center justify-center rounded-2xl"
+              style={{ backgroundColor: "var(--brand)", color: "#fff" }}
+            >
+              <Award className="size-8" />
+            </span>
+            <div>
+              <h3
+                className="text-xl font-extrabold"
+                style={{ fontFamily: "var(--font-display-custom)" }}
+              >
+                {settings?.certificate_title ?? "Certificado de finalización"}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {settings?.certificate_body ??
+                  "Al superar todos los tests recibes un certificado digital con tu nombre."}
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* 3 · Beneficios / qué aprenderás */}
+
         <section className="bg-secondary/40">
           <div className="container-x section-y">
             <div className="max-w-2xl">
@@ -409,48 +613,116 @@ function LandingPage() {
             </div>
 
             <div className="glass mx-auto mt-12 max-w-xl rounded-3xl p-9 text-center">
-              {course && (
+              {!priceRevealed ? (
                 <>
-                  <p className="text-sm uppercase tracking-widest text-white/60">Pago único</p>
+                  <p className="text-sm uppercase tracking-widest text-white/60">
+                    Oferta de acceso
+                  </p>
                   <p
-                    className="mt-3 text-5xl font-bold"
+                    className="mt-3 text-4xl font-bold"
                     style={{ fontFamily: "var(--font-display-custom)" }}
                   >
-                    {formatPrice(course.price_cents, course.currency)}
+                    Precio oculto
+                  </p>
+                  <p className="mt-4 text-sm text-white/70">
+                    Pulsa el botón y te enseñamos el precio y todo lo que incluye.
                   </p>
                 </>
+              ) : (
+                <>
+                  {course && (
+                    <>
+                      <p className="text-sm uppercase tracking-widest text-white/60">Pago único</p>
+                      <div className="mt-3 flex items-baseline justify-center gap-3">
+                        {hasDiscount && (
+                          <span className="text-2xl font-semibold text-white/45 line-through">
+                            {formatPrice(course.compare_at_price_cents!, course.currency)}
+                          </span>
+                        )}
+                        <span
+                          className="text-5xl font-bold"
+                          style={{ fontFamily: "var(--font-display-custom)" }}
+                        >
+                          {formatPrice(course.price_cents, course.currency)}
+                        </span>
+                      </div>
+                      {hasDiscount && (
+                        <p
+                          className="mt-3 inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest"
+                          style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                        >
+                          Ahorras{" "}
+                          {formatPrice(
+                            course.compare_at_price_cents! - course.price_cents,
+                            course.currency,
+                          )}
+                        </p>
+                      )}
+                    </>
+                  )}
+                  <ul className="mt-8 space-y-2.5 text-left text-sm text-white/75">
+                    {[
+                      "Todos los módulos y lecciones en vídeo",
+                      "Plantillas, checklists y recursos descargables",
+                      "Tests con corrección automática y certificado",
+                      "Tutor IA con la teoría del curso",
+                      "Actualizaciones incluidas",
+                    ].map((i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <CheckCircle2
+                          className="mt-0.5 size-4 shrink-0"
+                          style={{ color: "var(--brand-accent)" }}
+                        />
+                        {i}
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
-              <ul className="mt-8 space-y-2.5 text-left text-sm text-white/75">
-                {[
-                  "Todos los módulos y lecciones en vídeo",
-                  "Plantillas, checklists y recursos descargables",
-                  "Tests con corrección automática y certificado",
-                  "Tutor IA con la teoría del curso",
-                  "Actualizaciones incluidas",
-                ].map((i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <CheckCircle2
-                      className="mt-0.5 size-4 shrink-0"
-                      style={{ color: "var(--brand-accent)" }}
-                    />
-                    {i}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                asChild
-                size="lg"
-                className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
-                style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
-              >
-                <Link to={buyLink}>{settings?.hero_cta ?? "Apuntarme al curso"}</Link>
-              </Button>
+
+              {priceRevealed ? (
+                <Button
+                  asChild
+                  size="lg"
+                  className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
+                  style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                >
+                  <Link to={buyLink}>Quiero empezar ya</Link>
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={() => setPriceRevealed(true)}
+                  className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
+                  style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                >
+                  Quiero empezar ya
+                </Button>
+              )}
               <p className="mt-4 flex items-center justify-center gap-2 text-xs text-white/55">
                 <ShieldCheck className="size-4" /> Pago seguro con Stripe · acceso inmediato
               </p>
             </div>
+
+            {/* Garantía / reembolso */}
+            <div className="glass mx-auto mt-8 flex max-w-xl items-start gap-4 rounded-2xl p-6 text-left">
+              <ShieldCheck
+                className="mt-0.5 size-8 shrink-0"
+                style={{ color: "var(--brand-accent)" }}
+              />
+              <div>
+                <p className="text-base font-bold">
+                  {settings?.guarantee_title ?? "Garantía de 14 días"}
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-white/70">
+                  {settings?.guarantee_body ??
+                    "Si el curso no es para ti, escríbenos dentro de los primeros 14 días y te devolvemos el importe íntegro."}
+                </p>
+              </div>
+            </div>
           </div>
         </section>
+
 
         {/* 6 · FAQ */}
         {faq.length > 0 && (

@@ -64,6 +64,22 @@ export async function fetchCurriculum(courseId: string): Promise<ModuleWithLesso
   }));
 }
 
+export type PublicModule = {
+  id: string;
+  title: string;
+  description: string;
+  has_quiz: boolean;
+  lessons: { id: string; title: string; duration_minutes: number | null }[];
+};
+
+// Temario público: solo títulos (función de servidor, sin contenido de lecciones).
+export async function fetchPublicCurriculum(courseId: string): Promise<PublicModule[]> {
+  const { data, error } = await supabase.rpc("public_curriculum", { _course_id: courseId });
+  if (error) throw error;
+  return (data as unknown as PublicModule[]) ?? [];
+}
+
+
 export async function fetchMyProgress() {
   const { data, error } = await supabase.from("lesson_progress").select("lesson_id, completed_at");
   if (error) throw error;

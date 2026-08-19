@@ -132,6 +132,9 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
   const [newLesson, setNewLesson] = useState("");
   const [newVideo, setNewVideo] = useState("");
   const [newContent, setNewContent] = useState("");
+  const [newDuration, setNewDuration] = useState("");
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [creating, setCreating] = useState(false);
   const quiz = m.quizzes?.[0] ?? null;
 
   async function run(fn: () => PromiseLike<{ error: unknown }>, msg: string) {
@@ -142,6 +145,58 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
       return;
     }
     toast.success(msg);
+    onChange();
+  }
+
+  async function createLesson(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newLesson.trim()) return;
+    setCreating(true);
+    const { data: lesson, error } = await supabase
+      .from("lessons")
+      .insert({
+        module_id: m.id,
+        title: newLesson.trim(),
+        position: m.lessons.length + 1,
+        content: newContent,
+        video_url: newVideo.trim() || null,
+        duration_minutes: newDuration ? Number(newDuration) : null,
+      })
+      .select("id")
+      .single();
+    if (error || !lesson) {
+      setCreating(false);
+      toast.error(error?.message ?? "No se pudo crear la lección");
+      return;
+    }
+
+    let uploaded = 0;
+    for (const file of newFiles) {
+      const path = `lessons/${lesson.id}/${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage.from("course-files").upload(path, file);
+      if (upErr) {
+        toast.error(`${file.name}: ${upErr.message}`);
+        continue;
+      }
+      const { error: insErr } = await supabase
+        .from("lesson_resources")
+        .insert({ lesson_id: lesson.id, name: file.name, storage_path: path });
+      if (insErr) {
+        toast.error(`${file.name}: ${insErr.message}`);
+        continue;
+      }
+      uploaded++;
+    }
+
+    setCreating(false);
+    setNewLesson("");
+    setNewVideo("");
+    setNewContent("");
+    setNewDuration("");
+    setNewFiles([]);
+    toast.success(
+      uploaded ? `Lección creada con ${uploaded} archivo(s)` : "Lección creada",
+    );
     onChange();
   }
 
@@ -213,28 +268,7 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
           ))}
       </div>
 
-      <form
-        className="space-y-3 border-t border-border p-6"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!newLesson.trim()) return;
-          run(
-            () =>
-              supabase.from("lessons").insert({
-                module_id: m.id,
-                title: newLesson.trim(),
-                position: m.lessons.length + 1,
-                content: newContent,
-                video_url: newVideo.trim() || null,
-              }),
-            "Lección creada",
-          ).then(() => {
-            setNewLesson("");
-            setNewVideo("");
-            setNewContent("");
-          });
-        }}
-      >
+      <form className="space-y-3 border-t border-border p-6" onSubmit={createLesson}>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <Label>Nueva lección</Label>
@@ -246,7 +280,7 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
             />
           </div>
           <div>
-            <Label>Vídeo (URL de Bunny Stream)</Label>
+            <Label>Vídeo (Bunny Stream: libraryId/videoId o URL embed)</Label>
             <Input
               value={newVideo}
               onChange={(e) => setNewVideo(e.target.value)}
@@ -255,29 +289,77 @@ function ModuleCard({ module: m, onChange }: { module: AdminModule; onChange: ()
             />
           </div>
         </div>
-        <div>
-          <Label>Texto de la lección</Label>
-          <Textarea
-            value={newContent}
-            onChange={(e) => setNewContent(e.target.value)}
-            rows={3}
-            placeholder="Contenido explicativo (puedes ampliarlo después)"
-            className="mt-1"
-          />
+        <div className="grid gap-3 sm:grid-cols-[1fr_200px]">
+          <div>
+            <Label>Texto de la lección</Label>
+            <Textarea
+              value={newContent}
+              onChange={(e) => setNewContent(e.target.value)}
+              rows={3}
+              placeholder="Contenido explicativo"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Duración (minutos)</Label>
+            <Input
+              type="number"
+              value={newDuration}
+              onChange={(e) => setNewDuration(e.target.value)}
+              className="mt-1"
+            />
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Los archivos descargables se añaden al editar la lección una vez creada.
-        </p>
-        <Button type="submit" variant="outline">
-          <Plus className="mr-1 size-4" /> Añadir lección
+
+        <div>
+          <Label>Archivos descargables (PDF, plantillas…)</Label>
+          {newFiles.length > 0 && (
+            <ul className="mt-2 space-y-1 text-sm">
+              {newFiles.map((f, i) => (
+                <li
+                  key={`${f.name}-${i}`}
+                  className="flex items-center justify-between rounded-md border border-border px-3 py-2"
+                >
+                  <span className="truncate">{f.name}</span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setNewFiles((prev) => prev.filter((_, j) => j !== i))}
+                    aria-label={`Quitar ${f.name}`}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <label className="mt-2 inline-flex cursor-pointer items-center gap-2 rounded-md border border-input px-3 py-2 text-sm transition-colors hover:bg-secondary">
+            <FileUp className="size-4" />
+            Adjuntar archivos
+            <input
+              type="file"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                const files = Array.from(e.target.files ?? []);
+                e.target.value = "";
+                setNewFiles((prev) => [...prev, ...files]);
+              }}
+            />
+          </label>
+        </div>
+
+        <Button type="submit" variant="outline" disabled={creating}>
+          <Plus className="mr-1 size-4" /> {creating ? "Creando…" : "Crear lección"}
         </Button>
       </form>
-
 
       {m.has_quiz && quiz && <QuizEditor quiz={quiz} onChange={onChange} />}
     </section>
   );
 }
+
 
 function LessonEditor({
   lesson,

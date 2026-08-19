@@ -131,6 +131,7 @@ export type Database = {
       }
       courses: {
         Row: {
+          compare_at_price_cents: number | null
           created_at: string
           currency: string
           description: string
@@ -146,6 +147,7 @@ export type Database = {
           yearly_price_cents: number
         }
         Insert: {
+          compare_at_price_cents?: number | null
           created_at?: string
           currency?: string
           description?: string
@@ -161,6 +163,7 @@ export type Database = {
           yearly_price_cents?: number
         }
         Update: {
+          compare_at_price_cents?: number | null
           created_at?: string
           currency?: string
           description?: string
@@ -221,18 +224,30 @@ export type Database = {
           about_title: string
           accent_color: string
           benefits: Json
+          certificate_body: string
+          certificate_title: string
           course_id: string | null
+          curriculum_description: string
+          curriculum_title: string
           faq: Json
+          featured_logos: Json
           font_family: string
           free_lesson_subtitle: string
           free_lesson_title: string
           free_lesson_video_url: string | null
           gallery: Json
+          guarantee_body: string
+          guarantee_title: string
           hero_cta: string
           hero_subtitle: string
           hero_title: string
           id: string
+          og_image_url: string | null
           primary_color: string
+          rating_average: number
+          reviews_count: number
+          social_proof_note: string
+          students_count: number
           syllabus_description: string
           syllabus_pdf_path: string | null
           syllabus_title: string
@@ -243,18 +258,30 @@ export type Database = {
           about_title?: string
           accent_color?: string
           benefits?: Json
+          certificate_body?: string
+          certificate_title?: string
           course_id?: string | null
+          curriculum_description?: string
+          curriculum_title?: string
           faq?: Json
+          featured_logos?: Json
           font_family?: string
           free_lesson_subtitle?: string
           free_lesson_title?: string
           free_lesson_video_url?: string | null
           gallery?: Json
+          guarantee_body?: string
+          guarantee_title?: string
           hero_cta?: string
           hero_subtitle?: string
           hero_title?: string
           id?: string
+          og_image_url?: string | null
           primary_color?: string
+          rating_average?: number
+          reviews_count?: number
+          social_proof_note?: string
+          students_count?: number
           syllabus_description?: string
           syllabus_pdf_path?: string | null
           syllabus_title?: string
@@ -265,18 +292,30 @@ export type Database = {
           about_title?: string
           accent_color?: string
           benefits?: Json
+          certificate_body?: string
+          certificate_title?: string
           course_id?: string | null
+          curriculum_description?: string
+          curriculum_title?: string
           faq?: Json
+          featured_logos?: Json
           font_family?: string
           free_lesson_subtitle?: string
           free_lesson_title?: string
           free_lesson_video_url?: string | null
           gallery?: Json
+          guarantee_body?: string
+          guarantee_title?: string
           hero_cta?: string
           hero_subtitle?: string
           hero_title?: string
           id?: string
+          og_image_url?: string | null
           primary_color?: string
+          rating_average?: number
+          reviews_count?: number
+          social_proof_note?: string
+          students_count?: number
           syllabus_description?: string
           syllabus_pdf_path?: string | null
           syllabus_title?: string
@@ -854,6 +893,7 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_restricted_asset: { Args: { _name: string }; Returns: boolean }
+      public_curriculum: { Args: { _course_id: string }; Returns: Json }
       search_course_chunks: {
         Args: { _course_id: string; _limit?: number; _query: string }
         Returns: {
