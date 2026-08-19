@@ -257,6 +257,73 @@ function LandingPage() {
           </div>
         </section>
 
+        {/* 1b · Prueba social cuantificada */}
+        {(settings?.students_count || rating > 0 || logos.length > 0) && (
+          <section className="border-y border-border bg-secondary/40">
+            <div className="container-x py-10">
+              <div className="grid items-center gap-8 md:grid-cols-[auto_1fr]">
+                <div className="flex flex-wrap items-center justify-center gap-10">
+                  {!!settings?.students_count && (
+                    <div className="text-center">
+                      <p
+                        className="text-4xl font-extrabold"
+                        style={{ fontFamily: "var(--font-display-custom)" }}
+                      >
+                        {new Intl.NumberFormat("es-ES").format(settings.students_count)}+
+                      </p>
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        Alumnos
+                      </p>
+                    </div>
+                  )}
+                  {rating > 0 && (
+                    <div className="text-center">
+                      <div
+                        className="flex items-center justify-center gap-1"
+                        style={{ color: "var(--brand-accent)" }}
+                        aria-label={`Valoración media ${rating} sobre 5`}
+                      >
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`size-5 ${i < Math.round(rating) ? "fill-current" : "opacity-30"}`}
+                          />
+                        ))}
+                      </div>
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        {rating.toFixed(1)}/5
+                        {!!settings?.reviews_count && ` · ${settings.reviews_count} reseñas`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {logos.length > 0 && (
+                  <div className="text-center md:text-right">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                      Como visto en
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 md:justify-end">
+                      {logos.map((logo) => (
+                        <span key={logo} className="text-lg font-bold text-foreground/60">
+                          {logo}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              {settings?.social_proof_note && (
+                <p className="mt-6 text-center text-sm text-muted-foreground">
+                  {settings.social_proof_note}
+                </p>
+              )}
+            </div>
+          </section>
+        )}
+
+
+
         {/* 2 · Clase gratuita + temario (solo alumnos) */}
         <section id="temario" className="container-x section-y">
           <div className="mx-auto max-w-2xl text-center">
