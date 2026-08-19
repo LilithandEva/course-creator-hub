@@ -80,11 +80,14 @@ export function ScarcityMeter({
 }
 
 const SOCIAL_MESSAGES = [
-  "Alguien acaba de apuntarse a la clase gratuita",
-  "Alguien se acaba de inscribir en el curso",
-  "Alguien está viendo la clase gratuita ahora mismo",
-  "Alguien acaba de descargar el temario del curso",
+  "Lucía M. acaba de apuntarse a la clase gratuita",
+  "Carlos R. se acaba de inscribir en el curso",
+  "Marta G. está viendo la clase gratuita ahora mismo",
+  "Javier P. acaba de descargar el temario del curso",
+  "Ana S. se acaba de inscribir en el curso",
+  "David L. acaba de apuntarse a la clase gratuita",
 ];
+
 
 /** Aviso flotante genérico de actividad (sin datos personales inventados). */
 export function LiveSocialProof() {

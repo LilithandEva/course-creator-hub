@@ -352,7 +352,7 @@ function LandingPage() {
               Empieza sin pagar
             </p>
             <h2 className="display-lg mt-3" style={{ fontFamily: "var(--font-display-custom)" }}>
-              Conoce el curso antes de comprarlo
+              Así es el curso por dentro
             </h2>
             <p className="lede mt-4 text-muted-foreground">
               Una clase completa en abierto. El temario detallado en PDF es material del curso.
