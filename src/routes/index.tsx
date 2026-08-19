@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -127,7 +126,6 @@ function LandingPage() {
     ? settings.featured_logos
     : []) as string[];
   const rating = Number(settings?.rating_average ?? 0);
-  const [priceRevealed, setPriceRevealed] = useState(false);
   const hasDiscount =
     !!course?.compare_at_price_cents && course.compare_at_price_cents > course.price_cents;
 
@@ -236,15 +234,6 @@ function LandingPage() {
                   </Link>
                 </Button>
               </div>
-              {course && (
-                <p className="mt-4 text-sm font-medium text-muted-foreground">
-                  Acceso completo desde{" "}
-                  <span className="font-bold text-foreground">
-                    {formatPrice(course.price_cents, course.currency)}
-                  </span>{" "}
-                  · pago seguro con Stripe
-                </p>
-              )}
             </div>
 
             <ul className="mx-auto mt-12 flex max-w-3xl flex-wrap justify-center gap-x-7 gap-y-3 text-sm font-semibold text-muted-foreground">
@@ -613,92 +602,64 @@ function LandingPage() {
             </div>
 
             <div className="glass mx-auto mt-12 max-w-xl rounded-3xl p-9 text-center">
-              {!priceRevealed ? (
-                <>
-                  <p className="text-sm uppercase tracking-widest text-white/60">
-                    Oferta de acceso
-                  </p>
-                  <p
-                    className="mt-3 text-4xl font-bold"
-                    style={{ fontFamily: "var(--font-display-custom)" }}
-                  >
-                    Precio oculto
-                  </p>
-                  <p className="mt-4 text-sm text-white/70">
-                    Pulsa el botón y te enseñamos el precio y todo lo que incluye.
-                  </p>
-                </>
-              ) : (
-                <>
-                  {course && (
-                    <>
-                      <p className="text-sm uppercase tracking-widest text-white/60">Pago único</p>
-                      <div className="mt-3 flex items-baseline justify-center gap-3">
-                        {hasDiscount && (
-                          <span className="text-2xl font-semibold text-white/45 line-through">
-                            {formatPrice(course.compare_at_price_cents!, course.currency)}
-                          </span>
-                        )}
-                        <span
-                          className="text-5xl font-bold"
-                          style={{ fontFamily: "var(--font-display-custom)" }}
-                        >
-                          {formatPrice(course.price_cents, course.currency)}
-                        </span>
-                      </div>
+              <>
+                {course && (
+                  <>
+                    <p className="text-sm uppercase tracking-widest text-white/60">Pago único</p>
+                    <div className="mt-3 flex items-baseline justify-center gap-3">
                       {hasDiscount && (
-                        <p
-                          className="mt-3 inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest"
-                          style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
-                        >
-                          Ahorras{" "}
-                          {formatPrice(
-                            course.compare_at_price_cents! - course.price_cents,
-                            course.currency,
-                          )}
-                        </p>
+                        <span className="text-2xl font-semibold text-white/45 line-through">
+                          {formatPrice(course.compare_at_price_cents!, course.currency)}
+                        </span>
                       )}
-                    </>
-                  )}
-                  <ul className="mt-8 space-y-2.5 text-left text-sm text-white/75">
-                    {[
-                      "Todos los módulos y lecciones en vídeo",
-                      "Plantillas, checklists y recursos descargables",
-                      "Tests con corrección automática y certificado",
-                      "Tutor IA con la teoría del curso",
-                      "Actualizaciones incluidas",
-                    ].map((i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <CheckCircle2
-                          className="mt-0.5 size-4 shrink-0"
-                          style={{ color: "var(--brand-accent)" }}
-                        />
-                        {i}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+                      <span
+                        className="text-5xl font-bold"
+                        style={{ fontFamily: "var(--font-display-custom)" }}
+                      >
+                        {formatPrice(course.price_cents, course.currency)}
+                      </span>
+                    </div>
+                    {hasDiscount && (
+                      <p
+                        className="mt-3 inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest"
+                        style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                      >
+                        Ahorras{" "}
+                        {formatPrice(
+                          course.compare_at_price_cents! - course.price_cents,
+                          course.currency,
+                        )}
+                      </p>
+                    )}
+                  </>
+                )}
+                <ul className="mt-8 space-y-2.5 text-left text-sm text-white/75">
+                  {[
+                    "Todos los módulos y lecciones en vídeo",
+                    "Plantillas, checklists y recursos descargables",
+                    "Tests con corrección automática y certificado",
+                    "Tutor IA con la teoría del curso",
+                    "Actualizaciones incluidas",
+                  ].map((i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <CheckCircle2
+                        className="mt-0.5 size-4 shrink-0"
+                        style={{ color: "var(--brand-accent)" }}
+                      />
+                      {i}
+                    </li>
+                  ))}
+                </ul>
+              </>
 
-              {priceRevealed ? (
-                <Button
-                  asChild
-                  size="lg"
-                  className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
-                  style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
-                >
-                  <Link to={buyLink}>Quiero empezar ya</Link>
-                </Button>
-              ) : (
-                <Button
-                  size="lg"
-                  onClick={() => setPriceRevealed(true)}
-                  className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
-                  style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
-                >
-                  Quiero empezar ya
-                </Button>
-              )}
+              <Button
+                asChild
+                size="lg"
+                className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
+                style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+              >
+                <Link to={buyLink}>Quiero empezar ya</Link>
+              </Button>
               <p className="mt-4 flex items-center justify-center gap-2 text-xs text-white/55">
                 <ShieldCheck className="size-4" /> Pago seguro con Stripe · acceso inmediato
               </p>
