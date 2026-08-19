@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Download, FileText, Lock, PlayCircle } from "lucide-react";
@@ -35,6 +36,14 @@ function FreeLessonPage() {
   const course = data?.course;
   const fonts = fontStack(settings?.font_family);
   const embed = bunnyEmbedUrl(settings?.free_lesson_video_url);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("seen-free-class", "1");
+    } catch {
+      /* almacenamiento no disponible */
+    }
+  }, []);
 
   const { data: access } = useQuery({
     queryKey: ["my-access", course?.id, user?.id],
