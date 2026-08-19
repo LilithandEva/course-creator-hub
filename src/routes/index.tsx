@@ -126,6 +126,10 @@ function LandingPage() {
     ? settings.featured_logos
     : []) as string[];
   const rating = Number(settings?.rating_average ?? 0);
+  const [priceRevealed, setPriceRevealed] = useState(false);
+  const hasDiscount =
+    !!course?.compare_at_price_cents && course.compare_at_price_cents > course.price_cents;
+
 
 
   const heroEmbed = bunnyEmbedUrl(settings?.free_lesson_video_url);
