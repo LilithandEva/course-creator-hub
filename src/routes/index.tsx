@@ -743,7 +743,7 @@ function LandingPage() {
                   <ScarcityMeter
                     remaining={settings?.scarcity_remaining ?? 30}
                     total={settings?.scarcity_total ?? 30}
-                    note={settings?.scarcity_note}
+                    note={settings?.scarcity_note ?? null}
                   />
                 </div>
               )}
