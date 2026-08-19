@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export async function signedAssetUrl(path: string | null | undefined) {
   if (!path) return null;
-  if (path.startsWith("http")) return path;
+  if (path.startsWith("http") || path.startsWith("/")) return path;
   const { data } = await supabase.storage
     .from("public-assets")
     .createSignedUrl(path, 60 * 60);
