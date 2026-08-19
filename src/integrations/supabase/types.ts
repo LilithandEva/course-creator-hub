@@ -131,6 +131,7 @@ export type Database = {
       }
       courses: {
         Row: {
+          compare_at_price_cents: number | null
           created_at: string
           currency: string
           description: string
@@ -146,6 +147,7 @@ export type Database = {
           yearly_price_cents: number
         }
         Insert: {
+          compare_at_price_cents?: number | null
           created_at?: string
           currency?: string
           description?: string
@@ -161,6 +163,7 @@ export type Database = {
           yearly_price_cents?: number
         }
         Update: {
+          compare_at_price_cents?: number | null
           created_at?: string
           currency?: string
           description?: string
