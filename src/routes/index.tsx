@@ -608,48 +608,116 @@ function LandingPage() {
             </div>
 
             <div className="glass mx-auto mt-12 max-w-xl rounded-3xl p-9 text-center">
-              {course && (
+              {!priceRevealed ? (
                 <>
-                  <p className="text-sm uppercase tracking-widest text-white/60">Pago único</p>
+                  <p className="text-sm uppercase tracking-widest text-white/60">
+                    Oferta de acceso
+                  </p>
                   <p
-                    className="mt-3 text-5xl font-bold"
+                    className="mt-3 text-4xl font-bold"
                     style={{ fontFamily: "var(--font-display-custom)" }}
                   >
-                    {formatPrice(course.price_cents, course.currency)}
+                    Precio oculto
+                  </p>
+                  <p className="mt-4 text-sm text-white/70">
+                    Pulsa el botón y te enseñamos el precio y todo lo que incluye.
                   </p>
                 </>
+              ) : (
+                <>
+                  {course && (
+                    <>
+                      <p className="text-sm uppercase tracking-widest text-white/60">Pago único</p>
+                      <div className="mt-3 flex items-baseline justify-center gap-3">
+                        {hasDiscount && (
+                          <span className="text-2xl font-semibold text-white/45 line-through">
+                            {formatPrice(course.compare_at_price_cents!, course.currency)}
+                          </span>
+                        )}
+                        <span
+                          className="text-5xl font-bold"
+                          style={{ fontFamily: "var(--font-display-custom)" }}
+                        >
+                          {formatPrice(course.price_cents, course.currency)}
+                        </span>
+                      </div>
+                      {hasDiscount && (
+                        <p
+                          className="mt-3 inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest"
+                          style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                        >
+                          Ahorras{" "}
+                          {formatPrice(
+                            course.compare_at_price_cents! - course.price_cents,
+                            course.currency,
+                          )}
+                        </p>
+                      )}
+                    </>
+                  )}
+                  <ul className="mt-8 space-y-2.5 text-left text-sm text-white/75">
+                    {[
+                      "Todos los módulos y lecciones en vídeo",
+                      "Plantillas, checklists y recursos descargables",
+                      "Tests con corrección automática y certificado",
+                      "Tutor IA con la teoría del curso",
+                      "Actualizaciones incluidas",
+                    ].map((i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <CheckCircle2
+                          className="mt-0.5 size-4 shrink-0"
+                          style={{ color: "var(--brand-accent)" }}
+                        />
+                        {i}
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
-              <ul className="mt-8 space-y-2.5 text-left text-sm text-white/75">
-                {[
-                  "Todos los módulos y lecciones en vídeo",
-                  "Plantillas, checklists y recursos descargables",
-                  "Tests con corrección automática y certificado",
-                  "Tutor IA con la teoría del curso",
-                  "Actualizaciones incluidas",
-                ].map((i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <CheckCircle2
-                      className="mt-0.5 size-4 shrink-0"
-                      style={{ color: "var(--brand-accent)" }}
-                    />
-                    {i}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                asChild
-                size="lg"
-                className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
-                style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
-              >
-                <Link to={buyLink}>{settings?.hero_cta ?? "Apuntarme al curso"}</Link>
-              </Button>
+
+              {priceRevealed ? (
+                <Button
+                  asChild
+                  size="lg"
+                  className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
+                  style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                >
+                  <Link to={buyLink}>Quiero empezar ya</Link>
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={() => setPriceRevealed(true)}
+                  className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
+                  style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                >
+                  Quiero empezar ya
+                </Button>
+              )}
               <p className="mt-4 flex items-center justify-center gap-2 text-xs text-white/55">
                 <ShieldCheck className="size-4" /> Pago seguro con Stripe · acceso inmediato
               </p>
             </div>
+
+            {/* Garantía / reembolso */}
+            <div className="glass mx-auto mt-8 flex max-w-xl items-start gap-4 rounded-2xl p-6 text-left">
+              <ShieldCheck
+                className="mt-0.5 size-8 shrink-0"
+                style={{ color: "var(--brand-accent)" }}
+              />
+              <div>
+                <p className="text-base font-bold">
+                  {settings?.guarantee_title ?? "Garantía de 14 días"}
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-white/70">
+                  {settings?.guarantee_body ??
+                    "Si el curso no es para ti, escríbenos dentro de los primeros 14 días y te devolvemos el importe íntegro."}
+                </p>
+              </div>
+            </div>
           </div>
         </section>
+
 
         {/* 6 · FAQ */}
         {faq.length > 0 && (
