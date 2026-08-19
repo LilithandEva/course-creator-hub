@@ -109,7 +109,7 @@ function AdminLanding() {
     mutationFn: async () => {
       const { error } = await supabase
         .from("landing_settings")
-        .update({ ...form, gallery, benefits, faq })
+        .update({ ...form, gallery, benefits, faq, featured_logos: logos })
         .eq("id", settings!.id);
       if (error) throw error;
     },
