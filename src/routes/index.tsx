@@ -424,7 +424,100 @@ function LandingPage() {
         </section>
 
 
+        {/* 2b · Temario en la página (acordeón) */}
+        {(publicCurriculum ?? []).length > 0 && (
+          <section className="bg-background">
+            <div className="container-x section-y">
+              <div className="mx-auto max-w-2xl text-center">
+                <p className="eyebrow" style={{ color: "var(--brand-accent)" }}>
+                  Programa completo
+                </p>
+                <h2
+                  className="display-lg mt-3"
+                  style={{ fontFamily: "var(--font-display-custom)" }}
+                >
+                  {settings?.curriculum_title ?? "El temario, módulo a módulo"}
+                </h2>
+                <p className="lede mt-4 text-muted-foreground">
+                  {settings?.curriculum_description ??
+                    "Esto es exactamente lo que vas a ver dentro del campus."}
+                </p>
+              </div>
+
+              <div className="surface mx-auto mt-10 max-w-3xl px-6 py-2">
+                <Accordion type="single" collapsible>
+                  {(publicCurriculum ?? []).map((mod, i) => (
+                    <AccordionItem key={mod.id} value={mod.id}>
+                      <AccordionTrigger className="text-left">
+                        <span className="flex flex-1 items-center gap-3 pr-3">
+                          <span
+                            className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                            style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
+                          >
+                            {i + 1}
+                          </span>
+                          <span className="text-base font-bold">{mod.title}</span>
+                          <span className="ml-auto whitespace-nowrap text-xs font-medium text-muted-foreground">
+                            {mod.lessons.length} lecciones
+                            {mod.has_quiz && " · test"}
+                          </span>
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        {mod.description && (
+                          <p className="mb-3 text-sm text-muted-foreground">{mod.description}</p>
+                        )}
+                        <ul className="space-y-2">
+                          {mod.lessons.map((l) => (
+                            <li key={l.id} className="flex items-center gap-2 text-sm">
+                              <PlayCircle
+                                className="size-4 shrink-0"
+                                style={{ color: "var(--brand-accent)" }}
+                              />
+                              <span className="flex-1">{l.title}</span>
+                              {l.duration_minutes ? (
+                                <span className="text-xs text-muted-foreground">
+                                  {l.duration_minutes} min
+                                </span>
+                              ) : null}
+                            </li>
+                          ))}
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 2c · Certificación */}
+        <section className="container-x pb-4">
+          <div className="surface flex flex-col items-center gap-6 p-8 text-center sm:flex-row sm:text-left">
+            <span
+              className="flex size-16 shrink-0 items-center justify-center rounded-2xl"
+              style={{ backgroundColor: "var(--brand)", color: "#fff" }}
+            >
+              <Award className="size-8" />
+            </span>
+            <div>
+              <h3
+                className="text-xl font-extrabold"
+                style={{ fontFamily: "var(--font-display-custom)" }}
+              >
+                {settings?.certificate_title ?? "Certificado de finalización"}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {settings?.certificate_body ??
+                  "Al superar todos los tests recibes un certificado digital con tu nombre."}
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* 3 · Beneficios / qué aprenderás */}
+
         <section className="bg-secondary/40">
           <div className="container-x section-y">
             <div className="max-w-2xl">
