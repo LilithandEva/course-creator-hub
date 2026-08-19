@@ -190,6 +190,8 @@ export const updateCoursePricing = createServerFn({ method: "POST" })
           monthly_price_cents: data.monthlyCents,
           yearly_price_cents: data.yearlyCents,
           subscription_enabled: data.subscriptionEnabled,
+          compare_at_price_cents: data.compareAtCents,
+
         })
         .eq("slug", "ecommerce-formation");
       if (error) return { error: error.message };
