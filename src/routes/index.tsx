@@ -601,11 +601,24 @@ function LandingPage() {
                 Lo que dicen los alumnos
               </h2>
             </div>
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {testimonials.map((t) => (
-                <TestimonialCard key={t.id} testimonial={t} />
-              ))}
-            </div>
+            <Carousel
+              opts={{ align: "start", loop: true, dragFree: true }}
+              className="mt-12"
+            >
+              <CarouselContent className="-ml-6">
+                {testimonials.map((t) => (
+                  <CarouselItem key={t.id} className="pl-6 sm:basis-1/2 lg:basis-1/3">
+                    <TestimonialCard testimonial={t} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
+            </Carousel>
+            <p className="mt-4 text-center text-xs text-muted-foreground sm:hidden">
+              Desliza para ver más testimonios
+            </p>
+
           </section>
         )}
 
