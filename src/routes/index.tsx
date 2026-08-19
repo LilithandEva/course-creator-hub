@@ -17,7 +17,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-import { SiteHeader } from "@/components/site-header";
+import { BuyQuizCta } from "@/components/buy-quiz-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -172,8 +172,6 @@ function LandingPage() {
       className="min-h-screen bg-background"
       style={{ ...style, fontFamily: "var(--font-body-custom)" }}
     >
-      <SiteHeader />
-
       <main>
         {/* 1 · Eslogan + vídeo protagonista */}
         <section className="blaze-gradient relative overflow-hidden">
@@ -233,17 +231,14 @@ function LandingPage() {
 
               {/* CTA de compra justo debajo del vídeo */}
               <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <Button
-                  asChild
+                <BuyQuizCta
                   size="lg"
                   className="glow-cta h-14 rounded-full px-9 text-base font-extrabold uppercase tracking-wide transition-transform hover:-translate-y-0.5"
                   style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
                 >
-                  <Link to={buyLink}>
-                    {settings?.hero_cta ?? "Quiero el curso"}
-                    <ArrowRight className="size-5" />
-                  </Link>
-                </Button>
+                  {settings?.hero_cta ?? "Quiero el curso"}
+                  <ArrowRight className="size-5" />
+                </BuyQuizCta>
                 <Button
                   asChild
                   size="lg"
@@ -428,17 +423,14 @@ function LandingPage() {
                   </p>
                 )
               ) : (
-                <Button
-                  asChild
+                <BuyQuizCta
                   size="lg"
                   variant="outline"
                   className="mt-7 w-fit rounded-full border-2 px-6 font-bold"
                 >
-                  <Link to={buyLink}>
-                    <Lock className="size-4" />
-                    Desbloquear con el curso
-                  </Link>
-                </Button>
+                  <Lock className="size-4" />
+                  Desbloquear con el curso
+                </BuyQuizCta>
               )}
             </article>
           </div>
@@ -739,14 +731,13 @@ function LandingPage() {
                 </ul>
               </>
 
-              <Button
-                asChild
+              <BuyQuizCta
                 size="lg"
                 className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
                 style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
               >
-                <Link to={buyLink}>Quiero empezar ya</Link>
-              </Button>
+                Quiero empezar ya
+              </BuyQuizCta>
               <div className="mt-4">
                 <TrustRow tone="dark" />
               </div>
