@@ -89,7 +89,37 @@ function PricingAdmin() {
       <div className="space-y-2">
         <Label htmlFor="onetime">Pago único (€)</Label>
         <Input id="onetime" value={onetime} onChange={(e) => setOnetime(e.target.value)} />
+        <p className="text-xs text-muted-foreground">
+          Es el importe que realmente se cobra (se sincroniza con la pasarela de pago).
+        </p>
       </div>
+
+      <div className="space-y-3 rounded-lg border p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">Mostrar descuento</p>
+            <p className="text-xs text-muted-foreground">
+              Enseña el precio original tachado junto al precio con descuento.
+            </p>
+          </div>
+          <Switch checked={discountOn} onCheckedChange={setDiscountOn} />
+        </div>
+        {discountOn && (
+          <div className="space-y-2">
+            <Label htmlFor="compareAt">Precio original (€)</Label>
+            <Input
+              id="compareAt"
+              value={compareAt}
+              onChange={(e) => setCompareAt(e.target.value)}
+              placeholder="Ej. 349"
+            />
+            <p className="text-xs text-muted-foreground">
+              Solo es visual: debe ser mayor que el pago único y nunca se cobra.
+            </p>
+          </div>
+        )}
+      </div>
+
 
       <div className="flex items-center justify-between rounded-lg border p-4">
         <div>
