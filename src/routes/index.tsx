@@ -109,6 +109,18 @@ function LandingPage() {
     enabled: !!settings?.syllabus_pdf_path && hasAccess,
   });
 
+  const { data: publicCurriculum } = useQuery({
+    queryKey: ["public-curriculum", course?.id],
+    queryFn: () => fetchPublicCurriculum(course!.id),
+    enabled: !!course?.id,
+  });
+
+  const logos = (Array.isArray(settings?.featured_logos)
+    ? settings.featured_logos
+    : []) as string[];
+  const rating = Number(settings?.rating_average ?? 0);
+
+
   const heroEmbed = bunnyEmbedUrl(settings?.free_lesson_video_url);
 
 
