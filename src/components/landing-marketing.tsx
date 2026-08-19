@@ -39,9 +39,20 @@ export function ScarcityMeter({
   tone?: "light" | "dark";
 }) {
   const safeTotal = Math.max(total, 1);
-  const safeRemaining = Math.max(Math.min(remaining, safeTotal), 0);
+  const start = Math.max(Math.min(remaining, safeTotal), 1);
+  const floor = Math.max(Math.ceil(start / 2), 1);
+  const [safeRemaining, setSafeRemaining] = useState(start);
   const takenPct = Math.round(((safeTotal - safeRemaining) / safeTotal) * 100);
   const dark = tone === "dark";
+
+  // Descenso muy lento de plazas; al llegar al mínimo vuelve a empezar.
+  useEffect(() => {
+    setSafeRemaining(start);
+    const timer = setInterval(() => {
+      setSafeRemaining((prev) => (prev <= floor ? start : prev - 1));
+    }, 45000);
+    return () => clearInterval(timer);
+  }, [start, floor]);
 
   return (
     <div
@@ -51,8 +62,9 @@ export function ScarcityMeter({
       <div className="flex items-center justify-between gap-3">
         <p className={`flex items-center gap-2 text-sm font-bold ${dark ? "" : "text-foreground"}`}>
           <Flame className="size-4" style={{ color: "var(--brand-accent)" }} />
-          Quedan {safeRemaining} de {safeTotal} plazas
+          Solo quedan {safeRemaining} plazas
         </p>
+
         <span
           className="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest"
           style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
