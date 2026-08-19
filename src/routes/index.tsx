@@ -165,7 +165,6 @@ function LandingPage() {
     "--font-body-custom": fonts.body,
   } as React.CSSProperties;
 
-  const buyLink = user ? "/comprar" : "/comprar";
 
   return (
     <div
