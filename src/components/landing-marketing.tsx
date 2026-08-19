@@ -64,14 +64,8 @@ export function ScarcityMeter({
           <Flame className="size-4" style={{ color: "var(--brand-accent)" }} />
           Solo quedan {safeRemaining} plazas
         </p>
-
-        <span
-          className="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest"
-          style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
-        >
-          {takenPct}% ocupado
-        </span>
       </div>
+
       <div
         className={`mt-3 h-2 w-full overflow-hidden rounded-full ${dark ? "bg-white/15" : "bg-secondary"}`}
         role="progressbar"
