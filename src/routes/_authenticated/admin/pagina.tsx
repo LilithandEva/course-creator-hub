@@ -55,10 +55,22 @@ function AdminLanding() {
     primary_color: "#B3121B",
     accent_color: "#E11D2E",
     font_family: "geometric",
+    students_count: 0,
+    rating_average: 0,
+    reviews_count: 0,
+    social_proof_note: "",
+    curriculum_title: "",
+    curriculum_description: "",
+    guarantee_title: "",
+    guarantee_body: "",
+    certificate_title: "",
+    certificate_body: "",
+    og_image_url: "",
   });
   const [gallery, setGallery] = useState<string[]>([]);
   const [benefits, setBenefits] = useState<Benefit[]>([]);
   const [faq, setFaq] = useState<Faq[]>([]);
+  const [logos, setLogos] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
@@ -72,11 +84,26 @@ function AdminLanding() {
       primary_color: settings.primary_color,
       accent_color: settings.accent_color,
       font_family: settings.font_family,
+      students_count: settings.students_count ?? 0,
+      rating_average: Number(settings.rating_average ?? 0),
+      reviews_count: settings.reviews_count ?? 0,
+      social_proof_note: settings.social_proof_note ?? "",
+      curriculum_title: settings.curriculum_title ?? "",
+      curriculum_description: settings.curriculum_description ?? "",
+      guarantee_title: settings.guarantee_title ?? "",
+      guarantee_body: settings.guarantee_body ?? "",
+      certificate_title: settings.certificate_title ?? "",
+      certificate_body: settings.certificate_body ?? "",
+      og_image_url: settings.og_image_url ?? "",
     });
     setGallery(Array.isArray(settings.gallery) ? (settings.gallery as string[]) : []);
     setBenefits(Array.isArray(settings.benefits) ? (settings.benefits as Benefit[]) : []);
     setFaq(Array.isArray(settings.faq) ? (settings.faq as Faq[]) : []);
+    setLogos(
+      Array.isArray(settings.featured_logos) ? (settings.featured_logos as string[]) : [],
+    );
   }, [settings]);
+
 
   const save = useMutation({
     mutationFn: async () => {
