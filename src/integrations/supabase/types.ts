@@ -226,6 +226,10 @@ export type Database = {
           benefits: Json
           certificate_body: string
           certificate_title: string
+          comparison_after_label: string
+          comparison_before_label: string
+          comparison_rows: Json
+          comparison_title: string
           course_id: string | null
           curriculum_description: string
           curriculum_title: string
@@ -246,6 +250,10 @@ export type Database = {
           primary_color: string
           rating_average: number
           reviews_count: number
+          scarcity_enabled: boolean
+          scarcity_note: string
+          scarcity_remaining: number
+          scarcity_total: number
           social_proof_note: string
           students_count: number
           syllabus_description: string
@@ -260,6 +268,10 @@ export type Database = {
           benefits?: Json
           certificate_body?: string
           certificate_title?: string
+          comparison_after_label?: string
+          comparison_before_label?: string
+          comparison_rows?: Json
+          comparison_title?: string
           course_id?: string | null
           curriculum_description?: string
           curriculum_title?: string
@@ -280,6 +292,10 @@ export type Database = {
           primary_color?: string
           rating_average?: number
           reviews_count?: number
+          scarcity_enabled?: boolean
+          scarcity_note?: string
+          scarcity_remaining?: number
+          scarcity_total?: number
           social_proof_note?: string
           students_count?: number
           syllabus_description?: string
@@ -294,6 +310,10 @@ export type Database = {
           benefits?: Json
           certificate_body?: string
           certificate_title?: string
+          comparison_after_label?: string
+          comparison_before_label?: string
+          comparison_rows?: Json
+          comparison_title?: string
           course_id?: string | null
           curriculum_description?: string
           curriculum_title?: string
@@ -314,6 +334,10 @@ export type Database = {
           primary_color?: string
           rating_average?: number
           reviews_count?: number
+          scarcity_enabled?: boolean
+          scarcity_note?: string
+          scarcity_remaining?: number
+          scarcity_total?: number
           social_proof_note?: string
           students_count?: number
           syllabus_description?: string
