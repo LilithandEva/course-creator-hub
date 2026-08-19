@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -13,6 +14,7 @@ import {
   ShieldCheck,
   Sparkles,
   Star,
+  XCircle,
 } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
@@ -38,6 +40,12 @@ import {
   formatPrice,
 } from "@/lib/course";
 import { fontStack, signedAssetUrl, signedAssetUrls } from "@/lib/landing";
+import {
+  ExitIntentReminder,
+  LiveSocialProof,
+  ScarcityMeter,
+  TrustRow,
+} from "@/components/landing-marketing";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -83,6 +91,7 @@ export const Route = createFileRoute("/")({
 
 
 type Benefit = { title: string; body: string };
+type ComparisonRow = { before: string; after: string };
 type Faq = { q: string; a: string };
 
 function LandingPage() {
@@ -130,6 +139,19 @@ function LandingPage() {
     !!course?.compare_at_price_cents && course.compare_at_price_cents > course.price_cents;
 
 
+
+  const comparisonRows = (Array.isArray(settings?.comparison_rows)
+    ? settings.comparison_rows
+    : []) as ComparisonRow[];
+
+  const [seenFreeClass, setSeenFreeClass] = useState(true);
+  useEffect(() => {
+    try {
+      setSeenFreeClass(sessionStorage.getItem("seen-free-class") === "1");
+    } catch {
+      setSeenFreeClass(false);
+    }
+  }, []);
 
   const heroEmbed = bunnyEmbedUrl(settings?.free_lesson_video_url);
 
@@ -233,6 +255,10 @@ function LandingPage() {
                     Clase gratuita
                   </Link>
                 </Button>
+              </div>
+
+              <div className="mt-5">
+                <TrustRow />
               </div>
             </div>
 
@@ -583,6 +609,54 @@ function LandingPage() {
           </section>
         )}
 
+        {/* 4b · Con curso vs sin curso */}
+        {comparisonRows.length > 0 && (
+          <section className="bg-secondary/40">
+            <div className="container-x section-y">
+              <div className="mx-auto max-w-2xl text-center">
+                <p className="eyebrow" style={{ color: "var(--brand-accent)" }}>
+                  La diferencia
+                </p>
+                <h2
+                  className="display-lg mt-3"
+                  style={{ fontFamily: "var(--font-display-custom)" }}
+                >
+                  {settings?.comparison_title ?? "Antes y después del curso"}
+                </h2>
+              </div>
+
+              <div className="surface mx-auto mt-10 max-w-4xl overflow-hidden">
+                <div className="grid grid-cols-2 border-b border-border text-sm font-bold uppercase tracking-widest">
+                  <p className="p-4 text-muted-foreground">
+                    {settings?.comparison_before_label ?? "Sin el curso"}
+                  </p>
+                  <p className="p-4" style={{ color: "var(--brand-accent)" }}>
+                    {settings?.comparison_after_label ?? "Con el curso"}
+                  </p>
+                </div>
+                {comparisonRows.map((row, i) => (
+                  <div
+                    key={i}
+                    className="grid grid-cols-2 border-b border-border last:border-0"
+                  >
+                    <p className="flex items-start gap-2 p-4 text-sm text-muted-foreground">
+                      <XCircle className="mt-0.5 size-4 shrink-0 opacity-60" />
+                      {row.before}
+                    </p>
+                    <p className="flex items-start gap-2 p-4 text-sm font-medium">
+                      <CheckCircle2
+                        className="mt-0.5 size-4 shrink-0"
+                        style={{ color: "var(--brand-accent)" }}
+                      />
+                      {row.after}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* 5 · Precio y CTA de compra */}
         <section id="precio" className="ink-gradient text-white">
           <div className="container-x section-y">
@@ -660,9 +734,19 @@ function LandingPage() {
               >
                 <Link to={buyLink}>Quiero empezar ya</Link>
               </Button>
-              <p className="mt-4 flex items-center justify-center gap-2 text-xs text-white/55">
-                <ShieldCheck className="size-4" /> Pago seguro con Stripe · acceso inmediato
-              </p>
+              <div className="mt-4">
+                <TrustRow tone="dark" />
+              </div>
+
+              {settings?.scarcity_enabled !== false && (
+                <div className="mt-6">
+                  <ScarcityMeter
+                    remaining={settings?.scarcity_remaining ?? 30}
+                    total={settings?.scarcity_total ?? 30}
+                    note={settings?.scarcity_note}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Garantía / reembolso */}
@@ -729,6 +813,9 @@ function LandingPage() {
           </div>
         </div>
       </footer>
+
+      <LiveSocialProof />
+      <ExitIntentReminder disabled={hasAccess || seenFreeClass} />
     </div>
   );
 }
