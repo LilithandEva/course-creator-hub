@@ -17,7 +17,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-import { SiteHeader } from "@/components/site-header";
+import { BuyQuizCta } from "@/components/buy-quiz-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -165,15 +165,12 @@ function LandingPage() {
     "--font-body-custom": fonts.body,
   } as React.CSSProperties;
 
-  const buyLink = user ? "/comprar" : "/comprar";
 
   return (
     <div
       className="min-h-screen bg-background"
       style={{ ...style, fontFamily: "var(--font-body-custom)" }}
     >
-      <SiteHeader />
-
       <main>
         {/* 1 · Eslogan + vídeo protagonista */}
         <section className="blaze-gradient relative overflow-hidden">
@@ -233,17 +230,14 @@ function LandingPage() {
 
               {/* CTA de compra justo debajo del vídeo */}
               <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <Button
-                  asChild
+                <BuyQuizCta
                   size="lg"
                   className="glow-cta h-14 rounded-full px-9 text-base font-extrabold uppercase tracking-wide transition-transform hover:-translate-y-0.5"
                   style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
                 >
-                  <Link to={buyLink}>
-                    {settings?.hero_cta ?? "Quiero el curso"}
-                    <ArrowRight className="size-5" />
-                  </Link>
-                </Button>
+                  {settings?.hero_cta ?? "Quiero el curso"}
+                  <ArrowRight className="size-5" />
+                </BuyQuizCta>
                 <Button
                   asChild
                   size="lg"
@@ -428,17 +422,14 @@ function LandingPage() {
                   </p>
                 )
               ) : (
-                <Button
-                  asChild
+                <BuyQuizCta
                   size="lg"
                   variant="outline"
                   className="mt-7 w-fit rounded-full border-2 px-6 font-bold"
                 >
-                  <Link to={buyLink}>
-                    <Lock className="size-4" />
-                    Desbloquear con el curso
-                  </Link>
-                </Button>
+                  <Lock className="size-4" />
+                  Desbloquear con el curso
+                </BuyQuizCta>
               )}
             </article>
           </div>
@@ -601,11 +592,24 @@ function LandingPage() {
                 Lo que dicen los alumnos
               </h2>
             </div>
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {testimonials.map((t) => (
-                <TestimonialCard key={t.id} testimonial={t} />
-              ))}
-            </div>
+            <Carousel
+              opts={{ align: "start", loop: true, dragFree: true }}
+              className="mt-12"
+            >
+              <CarouselContent className="-ml-6">
+                {testimonials.map((t) => (
+                  <CarouselItem key={t.id} className="pl-6 sm:basis-1/2 lg:basis-1/3">
+                    <TestimonialCard testimonial={t} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
+            </Carousel>
+            <p className="mt-4 text-center text-xs text-muted-foreground sm:hidden">
+              Desliza para ver más testimonios
+            </p>
+
           </section>
         )}
 
@@ -726,14 +730,13 @@ function LandingPage() {
                 </ul>
               </>
 
-              <Button
-                asChild
+              <BuyQuizCta
                 size="lg"
                 className="mt-9 h-12 w-full rounded-full text-base font-semibold transition-transform hover:-translate-y-0.5"
                 style={{ backgroundColor: "var(--brand-accent)", color: "#fff" }}
               >
-                <Link to={buyLink}>Quiero empezar ya</Link>
-              </Button>
+                Quiero empezar ya
+              </BuyQuizCta>
               <div className="mt-4">
                 <TrustRow tone="dark" />
               </div>
