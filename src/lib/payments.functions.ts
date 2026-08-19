@@ -123,12 +123,13 @@ type PricingInput = {
   monthlyCents: number;
   yearlyCents: number;
   subscriptionEnabled: boolean;
+  // Precio "antes de descuento". Solo se muestra tachado en la web; nunca se cobra.
+  compareAtCents: number | null;
 };
 
 type PricingResult = { ok: true } | { error: string };
 
 // Admin-only. Updates the gateway catalogue first, then mirrors the amounts in
-// the database so the public page can never advertise a price we don't charge.
 export const updateCoursePricing = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: PricingInput) => {
@@ -136,11 +137,20 @@ export const updateCoursePricing = createServerFn({ method: "POST" })
     if (amounts.some((a) => !Number.isInteger(a) || a < 100 || a > 5_000_00)) {
       throw new Error("Los importes deben estar entre 1 € y 5.000 €");
     }
+    if (data.compareAtCents !== null) {
+      if (!Number.isInteger(data.compareAtCents) || data.compareAtCents > 5_000_00) {
+        throw new Error("El precio original no es válido");
+      }
+      if (data.compareAtCents <= data.onetimeCents) {
+        throw new Error("El precio original debe ser mayor que el precio con descuento");
+      }
+    }
     if (data.environment !== "sandbox" && data.environment !== "live") {
       throw new Error("Entorno de pago no válido");
     }
     return data;
   })
+
   .handler(async ({ data, context }): Promise<PricingResult> => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
