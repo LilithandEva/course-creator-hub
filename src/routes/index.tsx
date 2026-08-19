@@ -603,11 +603,19 @@ function LandingPage() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex" />
-              <CarouselNext className="hidden sm:flex" />
+              <CarouselPrevious
+                aria-label="Ver opiniones anteriores"
+                className="-left-3 size-11 border-2 bg-background shadow-[var(--shadow-soft)] sm:-left-5"
+                style={{ borderColor: "var(--brand-accent)", color: "var(--brand-accent)" }}
+              />
+              <CarouselNext
+                aria-label="Ver más opiniones"
+                className="-right-3 size-11 border-2 bg-background shadow-[var(--shadow-soft)] sm:-right-5"
+                style={{ borderColor: "var(--brand-accent)", color: "var(--brand-accent)" }}
+              />
             </Carousel>
-            <p className="mt-4 text-center text-xs text-muted-foreground sm:hidden">
-              Desliza para ver más testimonios
+            <p className="mt-6 text-center text-xs font-medium text-muted-foreground">
+              Usa las flechas o desliza para ver más opiniones
             </p>
 
           </section>
