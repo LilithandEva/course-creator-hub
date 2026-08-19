@@ -29,6 +29,7 @@ const FONTS = [
 
 type Benefit = { title: string; body: string };
 type Faq = { q: string; a: string };
+type ComparisonRow = { before: string; after: string };
 
 function AdminLanding() {
   const queryClient = useQueryClient();
@@ -66,11 +67,20 @@ function AdminLanding() {
     certificate_title: "",
     certificate_body: "",
     og_image_url: "",
+    comparison_title: "",
+    comparison_before_label: "",
+    comparison_after_label: "",
+    scarcity_enabled: true,
+    scarcity_total: 30,
+    scarcity_remaining: 30,
+    scarcity_note: "",
   });
+
   const [gallery, setGallery] = useState<string[]>([]);
   const [benefits, setBenefits] = useState<Benefit[]>([]);
   const [faq, setFaq] = useState<Faq[]>([]);
   const [logos, setLogos] = useState<string[]>([]);
+  const [comparison, setComparison] = useState<ComparisonRow[]>([]);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
@@ -95,7 +105,17 @@ function AdminLanding() {
       certificate_title: settings.certificate_title ?? "",
       certificate_body: settings.certificate_body ?? "",
       og_image_url: settings.og_image_url ?? "",
+      comparison_title: settings.comparison_title ?? "",
+      comparison_before_label: settings.comparison_before_label ?? "",
+      comparison_after_label: settings.comparison_after_label ?? "",
+      scarcity_enabled: settings.scarcity_enabled ?? true,
+      scarcity_total: settings.scarcity_total ?? 30,
+      scarcity_remaining: settings.scarcity_remaining ?? 30,
+      scarcity_note: settings.scarcity_note ?? "",
     });
+    setComparison(
+      Array.isArray(settings.comparison_rows) ? (settings.comparison_rows as ComparisonRow[]) : [],
+    );
     setGallery(Array.isArray(settings.gallery) ? (settings.gallery as string[]) : []);
     setBenefits(Array.isArray(settings.benefits) ? (settings.benefits as Benefit[]) : []);
     setFaq(Array.isArray(settings.faq) ? (settings.faq as Faq[]) : []);
@@ -109,7 +129,7 @@ function AdminLanding() {
     mutationFn: async () => {
       const { error } = await supabase
         .from("landing_settings")
-        .update({ ...form, gallery, benefits, faq, featured_logos: logos })
+        .update({ ...form, gallery, benefits, faq, featured_logos: logos, comparison_rows: comparison })
         .eq("id", settings!.id);
       if (error) throw error;
     },
@@ -358,6 +378,118 @@ function AdminLanding() {
             <Button variant="outline" className="rounded-full" onClick={() => setLogos([...logos, ""])}>
               <Plus className="size-4" /> Añadir marca
             </Button>
+          </div>
+        </div>
+      </section>
+
+      <section className="surface space-y-4 p-6">
+        <h2 className="font-display text-lg font-bold">Comparativa "sin curso / con curso"</h2>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <Label>Título de la sección</Label>
+            <Input
+              value={form.comparison_title}
+              onChange={(e) => setForm({ ...form, comparison_title: e.target.value })}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Etiqueta columna izquierda</Label>
+            <Input
+              value={form.comparison_before_label}
+              onChange={(e) => setForm({ ...form, comparison_before_label: e.target.value })}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Etiqueta columna derecha</Label>
+            <Input
+              value={form.comparison_after_label}
+              onChange={(e) => setForm({ ...form, comparison_after_label: e.target.value })}
+              className="mt-1"
+            />
+          </div>
+        </div>
+        <div className="space-y-3">
+          {comparison.map((row, i) => (
+            <div key={i} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+              <Input
+                value={row.before}
+                placeholder="Sin el curso…"
+                onChange={(e) =>
+                  setComparison(
+                    comparison.map((r, j) => (j === i ? { ...r, before: e.target.value } : r)),
+                  )
+                }
+              />
+              <Input
+                value={row.after}
+                placeholder="Con el curso…"
+                onChange={(e) =>
+                  setComparison(
+                    comparison.map((r, j) => (j === i ? { ...r, after: e.target.value } : r)),
+                  )
+                }
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Eliminar fila"
+                onClick={() => setComparison(comparison.filter((_, j) => j !== i))}
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            variant="outline"
+            className="rounded-full"
+            onClick={() => setComparison([...comparison, { before: "", after: "" }])}
+          >
+            <Plus className="size-4" /> Añadir fila
+          </Button>
+        </div>
+      </section>
+
+      <section className="surface space-y-4 p-6">
+        <h2 className="font-display text-lg font-bold">Plazas limitadas (escasez)</h2>
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input
+            type="checkbox"
+            checked={form.scarcity_enabled}
+            onChange={(e) => setForm({ ...form, scarcity_enabled: e.target.checked })}
+          />
+          Mostrar el contador de plazas en la página de venta
+        </label>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <Label>Plazas totales</Label>
+            <Input
+              type="number"
+              min="1"
+              value={form.scarcity_total}
+              onChange={(e) => setForm({ ...form, scarcity_total: Number(e.target.value) })}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Plazas restantes</Label>
+            <Input
+              type="number"
+              min="0"
+              value={form.scarcity_remaining}
+              onChange={(e) => setForm({ ...form, scarcity_remaining: Number(e.target.value) })}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Nota</Label>
+            <Input
+              value={form.scarcity_note}
+              onChange={(e) => setForm({ ...form, scarcity_note: e.target.value })}
+              className="mt-1"
+              placeholder="Plazas limitadas a este precio"
+            />
           </div>
         </div>
       </section>
