@@ -34,26 +34,44 @@ import { fontStack, signedAssetUrl, signedAssetUrls } from "@/lib/landing";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "eCommerce Formation · Curso online de eCommerce | TuCurso.com" },
-      {
-        name: "description",
-        content:
-          "Empieza con una clase gratuita y el temario en PDF. Curso online para lanzar y escalar tu tienda: vídeo, plantillas, tests y campus privado.",
-      },
-      { property: "og:title", content: "eCommerce Formation · Clase gratuita y temario en PDF" },
-      {
-        property: "og:description",
-        content:
-          "Mira la clase gratuita, descarga el temario y decide después: campus privado con vídeo, plantillas y tests.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: async () => {
+    const { data } = await supabase
+      .from("landing_settings")
+      .select("og_image_url")
+      .limit(1)
+      .maybeSingle();
+    return { ogImage: data?.og_image_url ?? null };
+  },
+  head: ({ loaderData }) => {
+    const ogImage = loaderData?.ogImage;
+    return {
+      meta: [
+        { title: "eCommerce Formation · Curso online de eCommerce | TuCurso.com" },
+        {
+          name: "description",
+          content:
+            "Empieza con una clase gratuita y el temario en PDF. Curso online para lanzar y escalar tu tienda: vídeo, plantillas, tests y campus privado.",
+        },
+        { property: "og:title", content: "eCommerce Formation · Clase gratuita y temario en PDF" },
+        {
+          property: "og:description",
+          content:
+            "Mira la clase gratuita, descarga el temario y decide después: campus privado con vídeo, plantillas y tests.",
+        },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(ogImage && ogImage.startsWith("https://")
+          ? [
+              { property: "og:image", content: ogImage },
+              { name: "twitter:image", content: ogImage },
+            ]
+          : []),
+      ],
+    };
+  },
   component: LandingPage,
 });
+
 
 type Benefit = { title: string; body: string };
 type Faq = { q: string; a: string };
