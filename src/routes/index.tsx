@@ -32,6 +32,8 @@ import {
 import { bunnyEmbedUrl, fetchLanding, fetchMyAccess, formatPrice } from "@/lib/course";
 import { fontStack, signedAssetUrl, signedAssetUrls } from "@/lib/landing";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/")({
   loader: async () => {
